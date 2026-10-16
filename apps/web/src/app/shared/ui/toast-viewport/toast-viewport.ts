@@ -1,0 +1,116 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ToastService, type ToastTone } from '../toast';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'moon-toast-viewport',
+  styles: `
+    :host {
+      bottom: var(--moon-space-4);
+      display: grid;
+      gap: var(--moon-space-2);
+      max-width: min(24rem, calc(100vw - 2rem));
+      position: fixed;
+      right: var(--moon-space-4);
+      z-index: 1000;
+    }
+    .toast {
+      align-items: flex-start;
+      animation: enter var(--moon-duration-medium) var(--moon-ease-out);
+      background: var(--moon-surface-raised);
+      border: 1px solid var(--moon-border);
+      border-left: 4px solid var(--tone);
+      border-radius: var(--moon-radius-md);
+      box-shadow: var(--moon-shadow-float);
+      display: grid;
+      gap: 0.15rem var(--moon-space-2);
+      grid-template-columns: auto 1fr auto;
+      padding: var(--moon-space-3);
+    }
+    .symbol {
+      color: var(--tone);
+      font-weight: 900;
+    }
+    .success {
+      --tone: var(--moon-success);
+    }
+    .error {
+      --tone: var(--moon-danger);
+    }
+    .info {
+      --tone: var(--moon-brand);
+    }
+    strong {
+      color: var(--moon-text);
+      font-size: 0.9375rem;
+    }
+    .message {
+      color: var(--moon-text-muted);
+      font-size: 0.875rem;
+      grid-column: 2;
+      line-height: 1.4;
+    }
+    button {
+      background: transparent;
+      border: 0;
+      border-radius: 50%;
+      color: var(--moon-text-muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 1.25rem;
+      height: 32px;
+      line-height: 1;
+      width: 32px;
+    }
+    button:hover {
+      background: var(--moon-surface-hover);
+      color: var(--moon-text);
+    }
+    button:focus-visible {
+      outline: 3px solid var(--moon-focus);
+      outline-offset: 2px;
+    }
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .toast {
+        animation: none;
+      }
+    }
+  `,
+  template: `
+    <section aria-label="Notificaciones" aria-live="polite">
+      @for (toast of toastService.messages(); track toast.id) {
+        <article
+          class="toast {{ toast.tone }}"
+          [attr.role]="toast.tone === 'error' ? 'alert' : 'status'"
+        >
+          <span class="symbol" aria-hidden="true">{{ symbol(toast.tone) }}</span
+          ><strong>{{ toast.title }}</strong>
+          <button
+            type="button"
+            [attr.aria-label]="'Cerrar: ' + toast.title"
+            (click)="toastService.dismiss(toast.id)"
+          >
+            ×
+          </button>
+          <span class="message">{{ toast.message }}</span>
+        </article>
+      }
+    </section>
+  `,
+})
+export class ToastViewport {
+  protected readonly toastService = inject(ToastService);
+  protected symbol(tone: ToastTone): string {
+    return tone === 'success' ? '✓' : tone === 'error' ? '!' : 'i';
+  }
+}

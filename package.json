@@ -1,0 +1,19 @@
+{
+  "name": "moon-app",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:web": "pnpm --filter @moon/web dev",
+    "dev:api": "pnpm --filter @moon/api dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format:check": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.6"
+  }
+}

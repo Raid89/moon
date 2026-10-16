@@ -1,0 +1,60 @@
+:root {
+  --moon-ink: #161616;
+  --moon-night: #0b0b0f;
+  --moon-surface: #111218;
+  --moon-surface-raised: #1a1b22;
+  --moon-surface-hover: #252631;
+  --moon-text: #fff7ed;
+  --moon-text-muted: #e7dcca;
+  --moon-text-faint: #b8aa98;
+  --moon-white: #fff7ed;
+  --moon-brand: #f59e0b;
+  --moon-brand-strong: #ea7a00;
+  --moon-brand-soft: #ffbe55;
+  --moon-brand-glow: rgb(245 158 11 / 24%);
+  --moon-success: #73d59a;
+  --moon-success-soft: rgb(115 213 154 / 14%);
+  --moon-warning: #ffc94a;
+  --moon-warning-soft: rgb(255 201 74 / 14%);
+  --moon-danger: #ff7a7a;
+  --moon-danger-soft: rgb(255 122 122 / 14%);
+  --moon-border: rgb(255 255 255 / 8%);
+  --moon-border-strong: rgb(255 255 255 / 18%);
+  --moon-focus: rgb(255 190 85 / 42%);
+  --moon-overlay: rgb(0 0 0 / 62%);
+  --moon-radius-md: 16px;
+  --moon-radius-lg: 24px;
+  --moon-radius-pill: 999px;
+  --moon-space-2: 0.5rem;
+  --moon-space-3: 0.75rem;
+  --moon-space-4: 1rem;
+  --moon-space-5: 1.5rem;
+  --moon-space-6: 2rem;
+  --moon-space-8: 4rem;
+  --moon-duration-fast: 150ms;
+  --moon-duration-medium: 220ms;
+  --moon-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --moon-shadow-float: 0 18px 48px rgb(0 0 0 / 32%);
+  --moon-shadow-modal: 0 28px 80px rgb(0 0 0 / 52%);
+  --moon-font-heading: 750 1rem/1.1 ui-rounded, 'Arial Rounded MT Bold', Inter, sans-serif;
+  --moon-font-display: 800 1rem/1.05 ui-rounded, 'Arial Rounded MT Bold', Inter, sans-serif;
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  background:
+    radial-gradient(circle at 90% -10%, rgb(245 158 11 / 17%), transparent 25rem), var(--moon-night);
+  color: var(--moon-text);
+  margin: 0;
+  min-width: 320px;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
