@@ -2,21 +2,21 @@
 
 Codex no debe resolver silenciosamente estas preguntas al implementar funciones críticas. Presentar alternativas y solicitar confirmación cuando impacten alcance, costo o seguridad.
 
-| ID  | Tema                | Estado     | Pregunta / alternativas                                                                                        |
-| --- | ------------------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
-| D01 | Base de datos y ORM | CONFIRMADO | MongoDB Atlas con Mongoose; base `moon1`.                                                                      |
-| D02 | Email OTP           | CONFIRMADO | Resend API configurada por entorno; plantilla de OTP propia y limitación en API.                               |
-| D03 | Sesión              | CONFIRMADO | Cookie HttpOnly de sesión opaca persistida, siete días y revocable.                                            |
-| D04 | Mapas               | PARCIAL    | [C] Google Maps mediante enlace e inserción. [D] API key, geocoding y proveedor alterno.                       |
-| D05 | Imágenes            | PARCIAL    | [C] Cloudflare R2 será el bucket. [D] Upload, límites, CORS, política de acceso, claves y URLs firmadas.       |
-| D06 | Inscripciones       | PENDIENTE  | ¿Se permite cancelar y volver a inscribirse? ¿Cierre automático y ventanas?                                    |
-| D07 | Evento              | PARCIAL    | [C] Publicar bloquea edición posterior. [P] Inicio obligatorio, sin fin. [D] Cancelación y reglas restantes.   |
-| D08 | Privacidad          | PENDIENTE  | ¿Participantes ven solo contador o también nombres? Recomendado solo contador público.                         |
-| D09 | Organizador         | PARCIAL    | [C] Lista `ORGANIZER_EMAILS` en API + OTP. [P] Acceso solo a eventos propios. [D] Gestión entre organizadores. |
-| D10 | Comunicaciones      | PENDIENTE  | ¿Enviar correo de inscripción/cancelación o solo confirmación en web?                                          |
-| D11 | SSR/SEO             | PARCIAL    | [C] El frontend Angular se desplegará en Vercel. [D] SPA, SSR o prerender; dominios y hosting de la API.       |
-| D12 | Municipios          | CONFIRMADO | Copia versionada de DIVIPOLA/DANE, actualizada bajo revisión explícita.                                        |
-| D13 | Público objetivo    | PENDIENTE  | ¿Hay restricciones de edad, condiciones de asistencia o consentimiento?                                        |
+| ID  | Tema                | Estado     | Pregunta / alternativas                                                                                         |
+| --- | ------------------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| D01 | Base de datos y ORM | CONFIRMADO | MongoDB Atlas con Mongoose; base `moon1`.                                                                       |
+| D02 | Email OTP           | CONFIRMADO | Resend API configurada por entorno; plantilla de OTP propia y limitación en API.                                |
+| D03 | Sesión              | CONFIRMADO | Cookie HttpOnly de sesión opaca persistida, siete días y revocable.                                             |
+| D04 | Mapas               | PARCIAL    | [C] Google Maps mediante enlace e inserción. [D] API key, geocoding y proveedor alterno.                        |
+| D05 | Imágenes            | PARCIAL    | [C] R2 privado, portada con API (JPG/PNG/WebP, 8 MB). [D] CDN/URLs firmadas, galería, CORS directo y retención. |
+| D06 | Inscripciones       | PENDIENTE  | ¿Se permite cancelar y volver a inscribirse? ¿Cierre automático y ventanas?                                     |
+| D07 | Evento              | PARCIAL    | [C] Publicar bloquea edición posterior. [P] Inicio obligatorio, sin fin. [D] Cancelación y reglas restantes.    |
+| D08 | Privacidad          | PENDIENTE  | ¿Participantes ven solo contador o también nombres? Recomendado solo contador público.                          |
+| D09 | Organizador         | PARCIAL    | [C] Lista `ORGANIZER_EMAILS` en API + OTP. [P] Acceso solo a eventos propios. [D] Gestión entre organizadores.  |
+| D10 | Comunicaciones      | PENDIENTE  | ¿Enviar correo de inscripción/cancelación o solo confirmación en web?                                           |
+| D11 | SSR/SEO             | PARCIAL    | [C] El frontend Angular se desplegará en Vercel. [D] SPA, SSR o prerender; dominios y hosting de la API.        |
+| D12 | Municipios          | CONFIRMADO | Copia versionada de DIVIPOLA/DANE, actualizada bajo revisión explícita.                                         |
+| D13 | Público objetivo    | PENDIENTE  | ¿Hay restricciones de edad, condiciones de asistencia o consentimiento?                                         |
 
 ## Decisiones confirmadas (no reabrir sin indicación)
 

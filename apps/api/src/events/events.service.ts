@@ -173,7 +173,8 @@ export class EventsService {
       cityName: this.locations.municipality(event.cityCode)?.name ?? '',
       mapLink: event.mapLink,
       imageUrls: (event.imageKeys ?? []).map(
-        (imageKey) => `/api/organizer/events/${event._id}/images/${imageKey}`,
+        (imageKey) =>
+          `/api/organizer/events/${String(event._id)}/images/${imageKey}`,
       ),
       status: event.status,
       publishedAt: event.publishedAt?.toISOString() ?? null,

@@ -125,7 +125,7 @@ describe('Organizer events', () => {
       expect.objectContaining({ size: 3 }),
     );
     expect(event.imageUrls).toEqual([
-      `/api/organizer/events/${id}/images/a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp`,
+      `/api/organizer/events/${String(id)}/images/a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp`,
     ]);
   });
   it('detects a concurrent change while publishing', async () => {

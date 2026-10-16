@@ -4,6 +4,7 @@ import {
   IsInt,
   IsMongoId,
   IsString,
+  IsUrl,
   Matches,
   Max,
   MaxLength,
