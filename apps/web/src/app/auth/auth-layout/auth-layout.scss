@@ -20,16 +20,14 @@
 }
 .wordmark,
 .mobile-brand {
-  font: var(--moon-font-display);
-  font-size: 2.25rem;
-  letter-spacing: -0.08em;
   margin: 0;
 }
-.wordmark span,
-.mobile-brand span {
-  font-size: 1.25rem;
-  vertical-align: top;
-  margin-left: var(--moon-space-2);
+.wordmark img,
+.mobile-brand img {
+  display: block;
+  width: 9rem;
+  max-width: 100%;
+  height: auto;
 }
 .welcome-copy {
   position: relative;
@@ -201,10 +199,6 @@ h1 {
   .mobile-brand {
     display: block;
     margin-bottom: var(--moon-space-6);
-    color: var(--moon-text);
-  }
-  .mobile-brand span {
-    color: var(--moon-brand);
   }
   .content {
     margin-block: auto;

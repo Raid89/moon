@@ -1,45 +1,72 @@
 app-auth-layout {
+  // A calmer rhythm for access, independent of the faster global UI timings.
+  --auth-duration-scene: 1200ms;
+  --auth-duration-enter: 900ms;
+  --auth-duration-feedback: 650ms;
+  --auth-duration-interaction: 320ms;
+  --auth-stagger: 120ms;
+  --auth-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
   @keyframes moon-auth-arrive {
     from {
       opacity: 0;
-      translate: 0 12px;
+      translate: 0 18px;
     }
     to {
       opacity: 1;
       translate: 0 0;
     }
   }
-
-  .heading {
-    animation: moon-auth-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out) backwards;
+  @keyframes moon-auth-scene {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
-  // A short introduction; the form is usable throughout and the scene settles at rest.
-  .welcome,
+  @keyframes moon-auth-mascot {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+      rotate: -3deg;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      rotate: 0deg;
+    }
+  }
+
+  .welcome {
+    animation: moon-auth-scene var(--auth-duration-scene) var(--auth-ease) backwards;
+  }
+  .heading,
   .wordmark,
   .mobile-brand,
   .welcome-copy,
-  .art,
   .welcome-foot,
   .steps {
-    animation: moon-auth-arrive calc(var(--moon-duration-medium) * 3) var(--moon-ease-out) backwards;
+    animation: moon-auth-arrive var(--auth-duration-enter) var(--auth-ease) backwards;
   }
-  .welcome-copy,
-  .steps {
-    animation-delay: calc(var(--moon-duration-fast) / 2);
+  .welcome-copy {
+    animation-duration: var(--auth-duration-scene);
+    animation-delay: var(--auth-stagger);
   }
   .art {
-    animation-delay: var(--moon-duration-fast);
+    animation: moon-auth-mascot calc(var(--auth-duration-scene) + 200ms) var(--auth-ease) backwards;
+    animation-delay: calc(var(--auth-stagger) * 1.5);
   }
   .welcome-foot {
-    animation-delay: var(--moon-duration-medium);
+    animation-delay: calc(var(--auth-stagger) * 2);
   }
   .steps li,
   .step-number {
     transition:
-      color var(--moon-duration-medium),
-      background-color var(--moon-duration-medium),
-      border-color var(--moon-duration-medium),
-      transform var(--moon-duration-medium) var(--moon-ease-out);
+      color var(--auth-duration-interaction),
+      background-color var(--auth-duration-interaction),
+      border-color var(--auth-duration-interaction),
+      transform var(--auth-duration-interaction) var(--auth-ease);
   }
   .current .step-number {
     transform: scale(1.08);
@@ -47,7 +74,7 @@ app-auth-layout {
   .art img,
   .sticker,
   .spark {
-    transition: transform calc(var(--moon-duration-medium) * 2) var(--moon-ease-out);
+    transition: transform var(--auth-duration-feedback) var(--auth-ease);
   }
   @media (hover: hover) and (pointer: fine) {
     .art:hover {
@@ -60,39 +87,46 @@ app-auth-layout {
       transform: rotate(30deg) scale(1.1);
     }
   }
-  // Animate mount and state feedback, not countdown ticks or field values.
-  form,
+
+  // Each field enters once; avoid multiplying opacity on both form and children.
   .email-preview,
   .support,
-  .status,
-  .feedback-enter {
-    animation: moon-auth-form-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out)
-      backwards;
-  }
   fieldset > moon-input,
   fieldset > moon-select,
   .location-fields > moon-select,
   fieldset > moon-button {
-    animation: moon-auth-form-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out)
-      backwards;
+    animation: moon-auth-form-arrive var(--auth-duration-enter) var(--auth-ease) backwards;
   }
-  fieldset > :nth-child(2),
+  fieldset > moon-input:first-child {
+    animation-delay: calc(var(--auth-stagger) / 2);
+  }
+  fieldset > :nth-child(2):not(moon-button),
   .location-fields > :nth-child(1) {
-    animation-delay: calc(var(--moon-duration-fast) / 3);
+    animation-delay: var(--auth-stagger);
   }
-  fieldset > :nth-child(3),
+  fieldset > :nth-child(3):not(moon-button),
   .location-fields > :nth-child(2) {
-    animation-delay: calc(var(--moon-duration-fast) * 2 / 3);
+    animation-delay: calc(var(--auth-stagger) * 2);
   }
   fieldset > moon-button {
-    animation-delay: var(--moon-duration-fast);
+    animation-delay: calc(var(--auth-stagger) * 2.5);
+  }
+  .support {
+    animation-delay: calc(var(--auth-stagger) * 3);
+  }
+  // Status and validation remain immediate, with a gentler visual arrival.
+  .status,
+  .feedback-enter,
+  .field > .hint,
+  .field > .error {
+    animation: moon-auth-form-arrive var(--auth-duration-feedback) var(--auth-ease) backwards;
   }
   .link-button,
   moon-button [aria-hidden] {
     transition:
-      transform var(--moon-duration-medium) var(--moon-ease-out),
-      color var(--moon-duration-fast),
-      opacity var(--moon-duration-fast);
+      transform var(--auth-duration-interaction) var(--auth-ease),
+      color var(--auth-duration-interaction),
+      opacity var(--auth-duration-interaction);
   }
   moon-button [aria-hidden] {
     display: inline-block;
@@ -105,7 +139,7 @@ app-auth-layout {
   @keyframes moon-auth-form-arrive {
     from {
       opacity: 0;
-      translate: 0 8px;
+      translate: 0 12px;
     }
     to {
       opacity: 1;

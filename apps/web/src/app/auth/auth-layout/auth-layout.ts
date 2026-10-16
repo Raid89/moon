@@ -7,7 +7,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `
     <main class="auth-page">
       <aside class="welcome" aria-label="Bienvenido a Moon">
-        <p class="wordmark">moon<span aria-hidden="true">✦</span></p>
+        <p class="wordmark">
+          <img src="/moon_logo_letra_blanco.png" alt="Moon" width="2172" height="724" />
+        </p>
         <div class="welcome-copy">
           <p class="eyebrow">MENOS SCROLL. MÁS ENCUENTROS.</p>
           <h2>Los mejores planes<br />empiezan con<br /><em>un hola.</em></h2>
@@ -22,7 +24,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         <p class="welcome-foot">Personas nuevas. Experiencias reales. <span>Colombia ↗</span></p>
       </aside>
       <section class="access" aria-labelledby="auth-title">
-        <p class="mobile-brand">moon<span aria-hidden="true">✦</span></p>
+        <p class="mobile-brand">
+          <img src="/moon_logo_letra_blanco.png" alt="Moon" width="2172" height="724" />
+        </p>
         <div class="content">
           <nav aria-label="Pasos de acceso">
             <ol class="steps">

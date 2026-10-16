@@ -326,3 +326,8 @@ solo en dispositivos con puntero preciso. El encabezado se recrea por paso con `
 los errores usan la misma API de Angular. No hay animaciones decorativas en bucle ni esperas
 artificiales antes de enviar formularios. `prefers-reduced-motion: reduce` desactiva animaciones
 y transiciones en toda la composición.
+
+El ritmo de acceso se ajusta con variables locales `--auth-*` en `auth-motion.scss`: entradas de
+900 ms, escena de 1200 ms, mascota de 1400 ms, feedback de 650 ms y escalonado de 120 ms. El formulario
+no anima su opacidad como contenedor para evitar acumularla con la de los campos. Las ayudas y
+validaciones aparecen sin demora adicional; los textos del contador no reinician la animación.
