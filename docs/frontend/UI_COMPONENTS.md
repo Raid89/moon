@@ -145,7 +145,7 @@ Cuando el formulario determine que un campo es inválido, pasa un mensaje espec�
 ### `moon-input`
 
 Inputs: `label`, `name`, `placeholder`, `hint`, `error`, `controlId`, `autocomplete`, `inputmode`, `maxlength` y `type`.
-`inputmode` y `maxlength` se usan para guiar teclados y longitudes, por ejemplo `inputmode="numeric"` y `maxlength="6"` para un OTP. `type` admite `text`, `email`, `password`, `search`, `tel` y `url`. Usa `controlId` únicamente si
+`inputmode` y `maxlength` se usan para guiar teclados y longitudes, por ejemplo `inputmode="numeric"` y `maxlength="6"` para un OTP. `type` admite `text`, `email`, `password`, `search`, `tel`, `url`, `number` y `datetime-local`. Usa `controlId` únicamente si
 necesitas un identificador estable; en caso contrario se genera automáticamente.
 
 ### `moon-textarea`

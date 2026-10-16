@@ -4,13 +4,17 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
-import { appConfig, mongoConfig } from './config/env.js';
+import { appConfig, mongoConfig, r2Config } from './config/env.js';
 import { LocationsModule } from './locations/locations.module.js';
+import { EventsModule } from './events/events.module.js';
 import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [appConfig, mongoConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig, mongoConfig, r2Config],
+    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -24,6 +28,7 @@ import { UsersModule } from './users/users.module.js';
     LocationsModule,
     AuthModule,
     UsersModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

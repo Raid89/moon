@@ -163,7 +163,9 @@ export class Profile implements OnInit {
         return;
       }
       if (user.profileComplete) {
-        await this.router.navigateByUrl('/cuenta');
+        await this.router.navigateByUrl(
+          this.auth.user()?.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta',
+        );
         return;
       }
       this.form.controls.name.setValue(user.name ?? '');
@@ -263,7 +265,9 @@ export class Profile implements OnInit {
         this.form.controls.name.value,
         this.form.controls.cityCode.value,
       );
-      await this.router.navigateByUrl('/cuenta');
+      await this.router.navigateByUrl(
+        this.auth.user()?.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta',
+      );
     } catch (e) {
       this.formError.set(e instanceof ApiError ? e.message : 'No pudimos guardar tu perfil.');
     } finally {

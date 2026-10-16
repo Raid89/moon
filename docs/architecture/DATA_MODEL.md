@@ -70,3 +70,13 @@ User 1 ── N Registration N ── 1 Event
 ## Implementado para acceso
 
 `users.email`, `otp_challenges.challengeId`, `sessions.tokenHash` y `auth_rate_limits.key` tienen índices únicos. `otp_challenges.expiresAt`, `sessions.expiresAt` y `auth_rate_limits.expiresAt` usan TTL; la aplicación además comprueba las fechas para no depender del ciclo asíncrono de eliminación de MongoDB.
+
+## Implementado: eventos de organizador
+
+Colección `events` con Mongoose: `organizerId` ObjectId, campos de contenido, `startsAt` Date UTC,
+`timeZone` fija `America/Bogota`, capacidad, lugar/dirección, `cityCode`, `mapLink` de Google Maps e
+`imageKeys` contiene nombres opacos de objetos de R2, sin URL pública ni credenciales. La API
+deriva rutas privadas de lectura para el organizador. Estados reales: `DRAFT | PUBLISHED`,
+`publishedAt`, timestamps y `__v`. Índice declarado `{ organizerId: 1, _id: -1 }` para listado propio.
+El índice físico no se ha verificado en esta entrega. No se ha implementado `registrations`.
+La publicación comprueba estado/versión; edición modifica solo `DRAFT` y aumenta versión.

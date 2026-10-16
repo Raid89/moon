@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService, MoonUser } from '../core/auth.service';
 import { Button } from '../shared/ui';
 
 @Component({
   selector: 'app-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button],
+  imports: [Button, RouterLink],
   styles: `
     :host {
       display: block;
@@ -79,6 +79,13 @@ import { Button } from '../shared/ui';
           <p class="value">{{ user()!.cityName }}</p>
         </div>
       </section>
+      @if (user()!.role === 'ORGANIZER') {
+        <p>
+          <a routerLink="/organizador/eventos" style="color: var(--moon-brand-soft)"
+            >Gestionar mis eventos →</a
+          >
+        </p>
+      }
       <moon-button variant="secondary" (click)="logout()" [loading]="loading()"
         >Cerrar sesión</moon-button
       >

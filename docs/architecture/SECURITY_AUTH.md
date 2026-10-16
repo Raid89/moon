@@ -30,3 +30,12 @@ Proveedor de email y antiabuso; almacenamiento/tiempo de vida de challenges; pol
 ## Pruebas mínimas
 
 OTP incorrecto/expirado/reutilizado, múltiples solicitudes, intentos simultáneos, rate limit, logout, cookie/CSRF, escalamiento de rol y IDOR, inscripción duplicada/cupo lleno.
+
+## Organizadores — implementado [C]
+
+El equipo se autoriza mediante `ORGANIZER_EMAILS` en el entorno exclusivo de API, separado por comas.
+Se usa el mismo OTP y perfil mínimo; no existe autoasignación de rol ni alta pública especial.
+El rol se sincroniza al verificar OTP y en cada resolución de sesión, incluyendo revocación al
+retirar un correo y reiniciar API. El guard exige `ORGANIZER` y perfil completo para todas las rutas
+`/api/organizer/events`. Las consultas incluyen propietario y las mutaciones incluyen estado.
+Véase `../decisions/ADR-0001-organizer-access-and-publishing.md`.

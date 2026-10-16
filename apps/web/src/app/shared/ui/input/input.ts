@@ -114,7 +114,9 @@ export class Input implements ControlValueAccessor {
   readonly maxlength = input<number | null>(100);
   readonly name = input('');
   readonly placeholder = input('');
-  readonly type = input<'email' | 'password' | 'search' | 'tel' | 'text' | 'url'>('text');
+  readonly type = input<
+    'email' | 'password' | 'search' | 'tel' | 'text' | 'url' | 'number' | 'datetime-local'
+  >('text');
 
   protected readonly value = signal('');
   protected readonly isDisabled = signal(false);

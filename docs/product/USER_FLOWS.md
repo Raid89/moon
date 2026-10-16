@@ -44,3 +44,15 @@
 - El reenvío conserva la pantalla de código ante fallos y permite reintentar. Cambiar de correo elimina el challenge guardado en el navegador.
 - El perfil carga departamento y municipio de forma dependiente, comunica fallos con reintento y descarta respuestas de departamentos seleccionados anteriormente.
 - Composición con bienvenida y asset oficial de Moon en escritorio; formulario prioritario y pasos compactos en móvil. Entradas escalonadas de bienvenida/formulario, encabezado animado al cambiar de paso y feedback breve de errores; las interacciones no esperan a las animaciones. Se respeta movimiento reducido.
+
+## Organizador — implementado 2026-10-15
+
+Correo en `ORGANIZER_EMAILS` → OTP normal → completar perfil si falta → `/organizador/eventos`.
+Desde Mi cuenta también hay enlace al panel. Un correo no autorizado conserva la experiencia USER.
+Lista privada paginada → crear evento → configurar en cuatro pasos (idea, momento, lugar, portada) →
+guardar borrador → confirmar publicación con advertencia de bloqueo → vista de datos deshabilitados.
+El lugar recibe enlace de Google Maps y previsualización; la portada se selecciona y previsualiza solo
+en el navegador hasta conectar el bucket. El borrador puede editarse tantas veces como sea necesario.
+Se exige guardar cambios antes de publicar. Los errores mantienen el formulario para corregir o
+reintentar. Los fallos de municipios ofrecen recuperación; rutas privadas usan noindex.
+Esta entrega aún no conecta eventos con catálogo público ni inscripciones.

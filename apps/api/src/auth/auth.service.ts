@@ -140,7 +140,10 @@ export class AuthService {
     const user = await this.users
       .findOneAndUpdate(
         { email: challenge.email },
-        { $setOnInsert: { email: challenge.email, role: 'USER' } },
+        {
+          $setOnInsert: { email: challenge.email },
+          $set: { role: this.roleForEmail(challenge.email) },
+        },
         { upsert: true, new: true },
       )
       .exec();
@@ -177,7 +180,17 @@ export class AuthService {
         code: 'UNAUTHENTICATED',
         message: 'Tu sesión venció. Vuelve a ingresar.',
       });
+    const role = this.roleForEmail(user.email);
+    if (user.role !== role) {
+      user.role = role;
+      await user.save();
+    }
     return user;
+  }
+
+  roleForEmail(email: string): 'USER' | 'ORGANIZER' {
+    const emails = this.config.get<string[]>('app.organizerEmails') ?? [];
+    return emails.includes(email.trim().toLowerCase()) ? 'ORGANIZER' : 'USER';
   }
 
   async logout(token?: string): Promise<void> {
@@ -260,7 +273,10 @@ export class AuthService {
         { new: true, upsert: true },
       )
       .exec();
-    if (entry.count > max)
+
+    const isDevEnv = this.config.get<string>('NODE_ENV') === 'development';
+
+    if (!isDevEnv && entry.count > max)
       throw this.rateLimited(
         'Has intentado demasiadas veces. Intenta de nuevo más tarde.',
       );

@@ -252,7 +252,13 @@ export class Login implements OnInit {
         this.codeForm.getRawValue().code,
       );
       sessionStorage.removeItem('moon.pending-otp');
-      await this.router.navigateByUrl(user.profileComplete ? '/cuenta' : '/completar-perfil');
+      await this.router.navigateByUrl(
+        user.profileComplete
+          ? user.role === 'ORGANIZER'
+            ? '/organizador/eventos'
+            : '/cuenta'
+          : '/completar-perfil',
+      );
     } catch (e) {
       this.codeError.set(e instanceof ApiError ? e.message : 'No pudimos verificar el código.');
     } finally {
