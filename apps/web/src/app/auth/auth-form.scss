@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+form {
+  display: grid;
+  gap: var(--moon-space-5);
+}
+fieldset {
+  display: grid;
+  gap: var(--moon-space-5);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+moon-button {
+  display: grid;
+  width: 100%;
+}
+.link-button {
+  background: none;
+  border: 0;
+  color: var(--moon-brand-soft);
+  cursor: pointer;
+  font: inherit;
+  min-height: 44px;
+  padding: var(--moon-space-2) 0;
+  text-align: left;
+  text-underline-offset: 4px;
+  text-decoration: underline;
+}
+.link-button:hover:not(:disabled) {
+  color: var(--moon-text);
+}
+.link-button:focus-visible {
+  outline: 3px solid var(--moon-focus);
+  outline-offset: 4px;
+  border-radius: var(--moon-radius-md);
+}
+.link-button:disabled {
+  color: var(--moon-text-faint);
+  cursor: not-allowed;
+}
+.support {
+  color: var(--moon-text-faint);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: var(--moon-space-5) 0 0;
+}
+.support strong {
+  color: var(--moon-text-muted);
+}
+.email-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--moon-space-2);
+  padding: var(--moon-space-3) var(--moon-space-4);
+  background: var(--moon-surface-raised);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-md);
+  margin-bottom: var(--moon-space-5);
+}
+.email-preview strong {
+  overflow-wrap: anywhere;
+  min-width: 0;
+  font-size: 0.875rem;
+}
+.email-preview .link-button {
+  font-size: 0.8125rem;
+}
+.status {
+  color: var(--moon-success);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 var(--moon-space-4);
+}
+.error {
+  background: var(--moon-danger-soft);
+  border-radius: var(--moon-radius-md);
+  color: var(--moon-danger);
+  padding: var(--moon-space-3);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.location-fields {
+  display: grid;
+  gap: var(--moon-space-5);
+}

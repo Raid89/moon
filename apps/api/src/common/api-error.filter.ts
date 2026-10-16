@@ -4,11 +4,14 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
 @Catch()
 export class ApiErrorFilter implements ExceptionFilter {
+  private readonly logger = new Logger(ApiErrorFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
@@ -28,6 +31,14 @@ export class ApiErrorFilter implements ExceptionFilter {
         : status === 500
           ? 'INTERNAL_ERROR'
           : 'REQUEST_FAILED';
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      const error = exception instanceof Error ? exception : undefined;
+      this.logger.error({
+        requestId: request.id,
+        errorName: error?.name ?? 'UnknownError',
+        message: error?.message ?? 'Unknown internal error',
+      });
+    }
     response.status(status).json({ code, message, requestId: request.id });
   }
 }

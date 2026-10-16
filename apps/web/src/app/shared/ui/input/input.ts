@@ -111,7 +111,7 @@ export class Input implements ControlValueAccessor {
   readonly hint = input('');
   readonly inputmode = input<'email' | 'numeric' | 'text' | 'tel' | 'url'>('text');
   readonly label = input('');
-  readonly maxlength = input<number | null>(null);
+  readonly maxlength = input<number | null>(100);
   readonly name = input('');
   readonly placeholder = input('');
   readonly type = input<'email' | 'password' | 'search' | 'tel' | 'text' | 'url'>('text');

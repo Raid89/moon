@@ -5,7 +5,7 @@ Codex no debe resolver silenciosamente estas preguntas al implementar funciones 
 | ID  | Tema                | Estado     | Pregunta / alternativas                                                                               |
 | --- | ------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
 | D01 | Base de datos y ORM | CONFIRMADO | MongoDB Atlas con Mongoose; base `moon1`.                                                             |
-| D02 | Email OTP           | CONFIRMADO | SMTP configurado por entorno; plantilla de OTP propia y limitación en API.                            |
+| D02 | Email OTP           | CONFIRMADO | Resend API configurada por entorno; plantilla de OTP propia y limitación en API.                      |
 | D03 | Sesión              | CONFIRMADO | Cookie HttpOnly de sesión opaca persistida, siete días y revocable.                                   |
 | D04 | Mapas               | PENDIENTE  | ¿Google Maps, Mapbox, OpenStreetMap u otro? Considerar costos y geocoding.                            |
 | D05 | Imágenes            | PENDIENTE  | ¿S3, Cloudinary u otro almacenamiento? ¿Tamaños y cantidades?                                         |
@@ -29,3 +29,7 @@ Codex no debe resolver silenciosamente estas preguntas al implementar funciones 
 ## Registro de ADRs
 
 Cuando se apruebe una decisión técnica importante, crear `docs/decisions/ADR-XXXX-<tema>.md` con Contexto, Opciones, Decisión, Consecuencias y Fecha, y actualizar esta tabla. No presentar una propuesta como decisión adoptada.
+
+## Refinamiento de acceso — 2026-10-15 [CONFIRMADO: alcance visual y usabilidad]
+
+Se mantiene C02/C04: una sola entrada por correo OTP y perfil mínimo. El pulido de interfaz reutiliza las primitivas y tokens actuales, hace explícitos los pasos y añade recuperación visible ante fallos de carga/reenvío. No incorpora proveedores, datos personales ni decisiones pendientes adicionales. Implementación descrita en `docs/product/USER_FLOWS.md`.

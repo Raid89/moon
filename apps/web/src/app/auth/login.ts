@@ -1,13 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  afterNextRender,
   OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
+import { AuthLayout } from './auth-layout/auth-layout';
 import { Button, Input } from '../shared/ui';
 import { ApiError, AuthService } from '../core/auth.service';
 
@@ -20,139 +27,138 @@ interface PendingOtp {
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, Button, Input, RouterLink],
-  styles: `
-    :host {
-      display: block;
-    }
-    .page {
-      margin: auto;
-      max-width: 31rem;
-      padding: clamp(2rem, 8vw, 6rem) var(--moon-space-4);
-    }
-    .brand {
-      display: inline-flex;
-      text-decoration: none;
-    }
-    .brand img {
-      height: 3rem;
-      width: 3rem;
-    }
-    .eyebrow {
-      color: var(--moon-brand-soft);
-      font-weight: 800;
-      margin: var(--moon-space-6) 0 var(--moon-space-2);
-    }
-    h1 {
-      font: var(--moon-font-display);
-      font-size: clamp(2.5rem, 10vw, 4.5rem);
-      letter-spacing: -0.06em;
-      line-height: 0.92;
-      margin: 0;
-    }
-    .copy {
-      color: var(--moon-text-muted);
-      line-height: 1.55;
-      margin: var(--moon-space-4) 0 var(--moon-space-6);
-    }
-    form {
-      display: grid;
-      gap: var(--moon-space-4);
-    }
-    moon-button {
-      width: 100%;
-    }
-    .back {
-      background: none;
-      border: 0;
-      color: var(--moon-brand-soft);
-      cursor: pointer;
-      font: inherit;
-      padding: 0;
-      text-align: left;
-    }
-    .notice {
-      background: var(--moon-success-soft);
-      border: 1px solid var(--moon-success);
-      border-radius: var(--moon-radius-md);
-      color: var(--moon-text);
-      padding: var(--moon-space-3);
-    }
-    .resend {
-      color: var(--moon-text-muted);
-      font-size: 0.875rem;
-      margin: 0;
-    }
-    .link-button {
-      background: none;
-      border: 0;
-      color: var(--moon-brand-soft);
-      cursor: pointer;
-      font: inherit;
-      padding: 0;
-      text-decoration: underline;
-    }
-  `,
-  template: `<main class="page">
-    <a class="brand" routerLink="/login"><img src="/moon_logo.png" alt="Moon" /></a>
-    @if (phase() === 'email') {
-      <p class="eyebrow">Tu próxima historia empieza aquí</p>
-      <h1>Entra a la noche.</h1>
-      <p class="copy">Usa tu correo para recibir un código seguro. No necesitas contraseña.</p>
-      <form [formGroup]="emailForm" (ngSubmit)="sendCode()">
-        <moon-input
-          label="Tu correo"
-          type="email"
-          autocomplete="email"
-          placeholder="tu@correo.com"
-          [formControl]="emailForm.controls.email"
-          [error]="emailError()"
-        /><moon-button type="submit" size="lg" [loading]="loading()">Enviar código</moon-button>
-      </form>
-    } @else {
-      <button class="back" type="button" (click)="changeEmail()">← Cambiar correo</button>
-      <p class="eyebrow">Revisa tu bandeja</p>
-      <h1>Tu código llegó.</h1>
-      <p class="copy">
-        Lo enviamos a <strong>{{ pending()!.email }}</strong
-        >. Vence en cinco minutos.
-      </p>
-      <form [formGroup]="codeForm" (ngSubmit)="verifyCode()">
-        <moon-input
-          label="Código de 6 dígitos"
-          type="text"
-          inputmode="numeric"
-          [maxlength]="6"
-          autocomplete="one-time-code"
-          placeholder="000000"
-          [formControl]="codeForm.controls.code"
-          [error]="codeError()"
-        /><moon-button type="submit" size="lg" [loading]="loading()">Continuar</moon-button>
-      </form>
-      <p class="resend">
-        ¿No llegó?
-        @if (canResend()) {
-          <button class="link-button" type="button" [disabled]="loading()" (click)="resend()">
-            Enviar otro código
+  imports: [ReactiveFormsModule, Button, Input, AuthLayout],
+  styleUrl: './auth-form.scss',
+  template: `
+    <app-auth-layout
+      [step]="phase() === 'email' ? 1 : 2"
+      [eyebrow]="phase() === 'email' ? 'QUÉ BUENO TENERTE AQUÍ' : 'UN PASO MÁS CERCA'"
+      [heading]="phase() === 'email' ? 'Tu próximo plan empieza aquí.' : 'Revisa tu correo.'"
+      [description]="
+        phase() === 'email'
+          ? 'Entra o crea tu cuenta con tu correo. Te enviaremos un código, sin contraseñas que recordar.'
+          : 'Escribe el código de 6 dígitos que te enviamos para continuar.'
+      "
+    >
+      @if (phase() === 'email') {
+        <form
+          [formGroup]="emailForm"
+          (ngSubmit)="sendCode()"
+          novalidate
+          [attr.aria-busy]="loading()"
+        >
+          <fieldset [disabled]="loading()">
+            <moon-input
+              controlId="auth-email"
+              name="email"
+              label="Correo electrónico"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              placeholder="tu@correo.com"
+              hint="Usa un correo al que tengas acceso."
+              [formControl]="emailForm.controls.email"
+              [error]="emailError()"
+            />
+            <moon-button type="submit" size="lg" [loading]="loading()">
+              {{ loading() ? 'Enviando código…' : 'Continuar con mi correo' }}
+              <span aria-hidden="true">↗</span>
+            </moon-button>
+          </fieldset>
+          @if (emailError()) {
+            <p class="error" role="alert" animate.enter="feedback-enter">{{ emailError() }}</p>
+          }
+        </form>
+        <p class="support">
+          <strong>¿Es tu primera vez?</strong> Con el mismo código podrás crear tu cuenta. Solo te
+          pediremos tu nombre y ciudad.
+        </p>
+      } @else {
+        <div class="email-preview">
+          <strong>{{ pending()!.email }}</strong>
+          <button class="link-button" type="button" [disabled]="loading()" (click)="changeEmail()">
+            Cambiar correo
           </button>
-        } @else {
-          Podrás pedir otro pronto.
-        }
-      </p>
-    }
-  </main>`,
+        </div>
+        <p class="status" role="status">{{ deliveryMessage() }}</p>
+        <form
+          [formGroup]="codeForm"
+          (ngSubmit)="verifyCode()"
+          novalidate
+          [attr.aria-busy]="loading()"
+        >
+          <fieldset [disabled]="loading()">
+            <moon-input
+              controlId="auth-code"
+              name="code"
+              label="Código de verificación"
+              type="text"
+              inputmode="numeric"
+              [maxlength]="6"
+              autocomplete="one-time-code"
+              placeholder="000000"
+              [hint]="
+                expired()
+                  ? 'El código venció. Solicita uno nuevo para continuar.'
+                  : 'Puedes pegar el código completo. Vence en ' + expiryLabel() + '.'
+              "
+              [formControl]="codeForm.controls.code"
+              [error]="codeError()"
+            />
+            <moon-button type="submit" size="lg" [loading]="loading()" [disabled]="expired()">
+              {{ loading() ? 'Verificando…' : 'Verificar y continuar' }}
+              <span aria-hidden="true">→</span>
+            </moon-button>
+          </fieldset>
+          @if (codeError()) {
+            <p class="error" role="alert" animate.enter="feedback-enter">{{ codeError() }}</p>
+          }
+        </form>
+        <p class="support">¿No encuentras el correo? Revisa spam o correo no deseado.</p>
+        <button
+          class="link-button"
+          type="button"
+          [disabled]="loading() || !canResend()"
+          (click)="resend()"
+        >
+          {{ canResend() ? 'Enviar otro código' : 'Podrás reenviar en ' + resendSeconds() + ' s' }}
+        </button>
+        <p class="support">
+          {{ expired() ? 'Tu código venció.' : '' }} Por seguridad, solo funciona el código más
+          reciente.
+        </p>
+      }
+    </app-auth-layout>
+  `,
 })
 export class Login implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
+  private readonly now = signal(Date.now());
+  readonly deliveryMessage = signal('Código enviado. Ya puedes revisar tu bandeja.');
   readonly phase = signal<'email' | 'code'>('email');
   readonly loading = signal(false);
   readonly pending = signal<PendingOtp | null>(null);
   readonly emailError = signal('');
   readonly codeError = signal('');
-  readonly canResend = computed(
-    () => !this.pending() || new Date(this.pending()!.resendAvailableAt) <= new Date(),
+  readonly resendSeconds = computed(() =>
+    Math.max(
+      0,
+      Math.ceil((Date.parse(this.pending()?.resendAvailableAt ?? '') - this.now()) / 1000),
+    ),
   );
+  readonly canResend = computed(() => this.resendSeconds() === 0);
+  readonly expirySeconds = computed(() =>
+    Math.max(0, Math.ceil((Date.parse(this.pending()?.expiresAt ?? '') - this.now()) / 1000)),
+  );
+  readonly expired = computed(() => this.expirySeconds() === 0);
+  readonly expiryLabel = computed(() => {
+    const seconds = this.expirySeconds();
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+  });
   readonly emailForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
@@ -166,20 +172,47 @@ export class Login implements OnInit {
     }),
   });
   ngOnInit(): void {
+    interval(1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.now.set(Date.now()));
     const saved = sessionStorage.getItem('moon.pending-otp');
-    if (saved) {
-      const pending = JSON.parse(saved) as PendingOtp;
-      if (new Date(pending.expiresAt) > new Date()) {
-        this.pending.set(pending);
+    if (!saved) return;
+    try {
+      const pending = JSON.parse(saved) as Partial<PendingOtp> | null;
+      if (
+        pending &&
+        typeof pending.email === 'string' &&
+        typeof pending.challengeId === 'string' &&
+        typeof pending.expiresAt === 'string' &&
+        typeof pending.resendAvailableAt === 'string' &&
+        Date.parse(pending.expiresAt) > Date.now() &&
+        Number.isFinite(Date.parse(pending.resendAvailableAt))
+      ) {
+        this.pending.set(pending as PendingOtp);
+        this.emailForm.controls.email.setValue(pending.email);
         this.phase.set('code');
-      } else sessionStorage.removeItem('moon.pending-otp');
+        this.focusField('auth-code');
+        return;
+      }
+    } catch {
+      /* Ignore invalid or outdated saved challenges. */
     }
+    sessionStorage.removeItem('moon.pending-otp');
+  }
+  private focusField(id: string): void {
+    afterNextRender(
+      () => this.element.nativeElement.querySelector<HTMLElement>(`#${id}`)?.focus(),
+      { injector: this.injector },
+    );
   }
   async sendCode(): Promise<void> {
+    if (this.loading()) return;
     this.emailError.set('');
+    this.emailForm.controls.email.setValue(this.emailForm.controls.email.value.trim());
     if (this.emailForm.invalid) {
       this.emailForm.controls.email.markAsTouched();
-      this.emailError.set('Escribe un correo válido.');
+      this.emailError.set('Escribe un correo válido, por ejemplo: tu@correo.com.');
+      this.focusField('auth-email');
       return;
     }
     this.loading.set(true);
@@ -188,19 +221,28 @@ export class Login implements OnInit {
         email: this.emailForm.getRawValue().email.trim().toLowerCase(),
         ...(await this.auth.requestOtp(this.emailForm.getRawValue().email)),
       };
+      this.now.set(Date.now());
       this.pending.set(pending);
+      this.codeForm.reset();
+      this.codeError.set('');
+      this.deliveryMessage.set('Código enviado. Revisa tu bandeja de entrada.');
       sessionStorage.setItem('moon.pending-otp', JSON.stringify(pending));
       this.phase.set('code');
+      this.focusField('auth-code');
     } catch (e) {
-      this.emailError.set(e instanceof ApiError ? e.message : 'No pudimos enviar el código.');
+      const message = e instanceof ApiError ? e.message : 'No pudimos enviar el código.';
+      if (this.phase() === 'code') this.codeError.set(message);
+      else this.emailError.set(message);
     } finally {
       this.loading.set(false);
     }
   }
   async verifyCode(): Promise<void> {
+    if (this.loading() || this.expired()) return;
     this.codeError.set('');
     if (this.codeForm.invalid || !this.pending()) {
       this.codeError.set('Escribe los 6 dígitos del código.');
+      this.focusField('auth-code');
       return;
     }
     this.loading.set(true);
@@ -218,13 +260,19 @@ export class Login implements OnInit {
     }
   }
   async resend(): Promise<void> {
-    this.phase.set('email');
+    if (this.loading() || !this.canResend() || !this.pending()) return;
+    this.emailForm.controls.email.setValue(this.pending()!.email);
     await this.sendCode();
   }
   changeEmail(): void {
+    if (this.loading()) return;
+    this.emailForm.controls.email.setValue(this.pending()?.email ?? '');
     sessionStorage.removeItem('moon.pending-otp');
     this.pending.set(null);
     this.phase.set('email');
-    this.codeForm.controls.code.setValue('');
+    this.emailError.set('');
+    this.codeError.set('');
+    this.codeForm.reset();
+    this.focusField('auth-email');
   }
 }

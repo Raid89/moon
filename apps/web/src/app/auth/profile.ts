@@ -1,93 +1,125 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, Department, Municipality, ApiError } from '../core/auth.service';
 import { Button, Input, Select, type SelectOption } from '../shared/ui';
+import { AuthLayout } from './auth-layout/auth-layout';
+
 @Component({
   selector: 'app-profile',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, Button, Input, Select],
-  styles: `
-    :host {
-      display: block;
-    }
-    .page {
-      margin: auto;
-      max-width: 34rem;
-      padding: clamp(2rem, 8vw, 6rem) var(--moon-space-4);
-    }
-    .brand {
-      margin: 0;
-    }
-    .brand img {
-      display: block;
-      height: 3rem;
-      width: 3rem;
-    }
-    .eyebrow {
-      color: var(--moon-brand-soft);
-      font-weight: 800;
-      margin: var(--moon-space-6) 0 var(--moon-space-2);
-    }
-    h1 {
-      font: var(--moon-font-display);
-      font-size: clamp(2.5rem, 10vw, 4.5rem);
-      letter-spacing: -0.06em;
-      line-height: 0.92;
-      margin: 0;
-    }
-    .copy {
-      color: var(--moon-text-muted);
-      line-height: 1.55;
-      margin: var(--moon-space-4) 0 var(--moon-space-6);
-    }
-    form {
-      display: grid;
-      gap: var(--moon-space-4);
-    }
-    moon-button {
-      width: 100%;
-    }
-    .error {
-      color: var(--moon-danger);
-      margin: 0;
-    }
+  imports: [ReactiveFormsModule, Button, Input, Select, AuthLayout],
+  styleUrl: './auth-form.scss',
+  template: `
+    <app-auth-layout
+      [step]="3"
+      eyebrow="HAGAMOS LAS PRESENTACIONES"
+      heading="Ahora sí, ¿cómo te llamas?"
+      description="Solo falta tu nombre y dónde vives. Hagamos que los próximos encuentros se sientan más cerca."
+    >
+      @if (initializing()) {
+        <p class="status" role="status">Preparando tu perfil…</p>
+      }
+      @if (profileReady()) {
+        <p class="status">✓ Correo verificado. Este es el último paso.</p>
+      }
+      <form
+        [formGroup]="form"
+        (ngSubmit)="save()"
+        novalidate
+        [attr.aria-busy]="loading() || initializing()"
+      >
+        <fieldset [disabled]="loading() || initializing() || !profileReady()">
+          <moon-input
+            label="Tu nombre"
+            name="name"
+            autocomplete="name"
+            placeholder="Como te gusta que te llamen"
+            [formControl]="form.controls.name"
+            [error]="nameError()"
+          />
+          <div class="location-fields">
+            <moon-select
+              label="Departamento"
+              [placeholder]="
+                departmentsLoading() ? 'Cargando departamentos…' : 'Elige tu departamento'
+              "
+              [options]="departmentOptions()"
+              [formControl]="form.controls.departmentCode"
+              [error]="departmentError()"
+            />
+            <moon-select
+              label="Ciudad o municipio"
+              [placeholder]="citiesLoading() ? 'Cargando municipios…' : 'Elige tu municipio'"
+              [options]="municipalityOptions()"
+              [formControl]="form.controls.cityCode"
+              [error]="cityError()"
+              [hint]="
+                !form.controls.departmentCode.value
+                  ? 'Primero selecciona tu departamento.'
+                  : 'Tu lugar de residencia en Colombia.'
+              "
+            />
+          </div>
+          @if (locationError()) {
+            <p class="error" role="alert" animate.enter="feedback-enter">{{ locationError() }}</p>
+            <button class="link-button" type="button" (click)="retryLocations()">
+              Volver a cargar ubicaciones
+            </button>
+          }
+          <moon-button
+            type="submit"
+            size="lg"
+            [loading]="loading()"
+            [disabled]="
+              citiesLoading() || departmentsLoading() || !departments().length || !!locationError()
+            "
+          >
+            {{ loading() ? 'Guardando tu perfil…' : 'Guardar y continuar' }}
+            <span aria-hidden="true">↗</span>
+          </moon-button>
+        </fieldset>
+        @if (formError()) {
+          <p class="error" role="alert" animate.enter="feedback-enter">{{ formError() }}</p>
+        }
+      </form>
+      @if (!profileReady() && !initializing()) {
+        <button class="link-button" type="button" (click)="ngOnInit()">Volver a intentar</button>
+      }
+      <p class="support">
+        Un buen comienzo no necesita más datos. Tu correo, nombre y ciudad son suficientes para tu
+        perfil.
+      </p>
+    </app-auth-layout>
   `,
-  template: `<main class="page">
-    <p class="brand"><img src="/moon_logo.png" alt="Moon" /></p>
-    <p class="eyebrow">Ya casi</p>
-    <h1>Cuéntanos de ti.</h1>
-    <p class="copy">Con tu nombre y ciudad podremos preparar experiencias que se sientan cerca.</p>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <moon-input
-        label="¿Cómo te llamas?"
-        autocomplete="name"
-        placeholder="Tu nombre"
-        [formControl]="form.controls.name"
-        [error]="nameError()"
-      /><moon-select
-        label="Departamento"
-        placeholder="Elige tu departamento"
-        [options]="departmentOptions()"
-        [formControl]="form.controls.departmentCode"
-        [error]="departmentError()"
-      /><moon-select
-        label="Municipio de residencia"
-        placeholder="Elige tu municipio"
-        [options]="municipalityOptions()"
-        [formControl]="form.controls.cityCode"
-        [error]="cityError()"
-      /><moon-button type="submit" size="lg" [loading]="loading()">Guardar y continuar</moon-button>
-      <p class="error" role="alert">{{ formError() }}</p>
-    </form>
-  </main>`,
 })
 export class Profile implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
+  private locationRequest = 0;
   readonly loading = signal(false);
+  readonly initializing = signal(true);
+  readonly profileReady = signal(false);
+  readonly departmentsLoading = signal(false);
+  readonly citiesLoading = signal(false);
   readonly departments = signal<Department[]>([]);
   readonly municipalities = signal<Municipality[]>([]);
+  readonly locationError = signal('');
   readonly formError = signal('');
   readonly nameError = signal('');
   readonly departmentError = signal('');
@@ -97,53 +129,138 @@ export class Profile implements OnInit {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(2)],
     }),
-    departmentCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    cityCode: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    departmentCode: new FormControl(
+      { value: '', disabled: true },
+      { nonNullable: true, validators: [Validators.required] },
+    ),
+    cityCode: new FormControl(
+      { value: '', disabled: true },
+      { nonNullable: true, validators: [Validators.required] },
+    ),
   });
-  readonly departmentOptions = () =>
+  readonly departmentOptions = computed(() =>
     this.departments().map(
       ({ code, name }) => ({ value: code, label: name }) satisfies SelectOption,
-    );
-  readonly municipalityOptions = () =>
+    ),
+  );
+  readonly municipalityOptions = computed(() =>
     this.municipalities().map(
       ({ code, name }) => ({ value: code, label: name }) satisfies SelectOption,
-    );
-  async ngOnInit() {
-    const user = await this.auth.loadUser();
-    if (!user) {
-      await this.router.navigateByUrl('/login');
-      return;
-    }
-    if (user.profileComplete) {
-      await this.router.navigateByUrl('/cuenta');
-      return;
-    }
-    try {
-      this.departments.set(await this.auth.departments());
-    } catch (e) {
-      this.formError.set(e instanceof ApiError ? e.message : 'No pudimos cargar las ciudades.');
-    }
-    this.form.controls.departmentCode.valueChanges.subscribe(async (code) => {
-      this.form.controls.cityCode.setValue('');
-      this.municipalities.set(code ? await this.auth.municipalities(code) : []);
+    ),
+  );
+  constructor() {
+    this.form.controls.departmentCode.valueChanges.pipe(takeUntilDestroyed()).subscribe((code) => {
+      void this.loadMunicipalities(code);
     });
   }
-  async save() {
+  async ngOnInit(): Promise<void> {
+    this.initializing.set(true);
+    this.formError.set('');
+    try {
+      const user = await this.auth.loadUser();
+      if (!user) {
+        await this.router.navigateByUrl('/login');
+        return;
+      }
+      if (user.profileComplete) {
+        await this.router.navigateByUrl('/cuenta');
+        return;
+      }
+      this.form.controls.name.setValue(user.name ?? '');
+      this.profileReady.set(true);
+      await this.loadDepartments();
+    } catch (e) {
+      this.formError.set(
+        e instanceof ApiError ? e.message : 'No pudimos cargar tu perfil. Inténtalo de nuevo.',
+      );
+    } finally {
+      this.initializing.set(false);
+    }
+  }
+  private async loadDepartments(): Promise<void> {
+    this.departmentsLoading.set(true);
+    this.locationError.set('');
+    try {
+      const departments = await this.auth.departments();
+      this.departments.set(departments);
+      if (departments.length) this.form.controls.departmentCode.enable({ emitEvent: false });
+      else this.locationError.set('No hay departamentos disponibles. Intenta cargarlos de nuevo.');
+    } catch (e) {
+      this.locationError.set(
+        e instanceof ApiError ? e.message : 'No pudimos cargar los departamentos.',
+      );
+    } finally {
+      this.departmentsLoading.set(false);
+    }
+  }
+  private async loadMunicipalities(code: string): Promise<void> {
+    const request = ++this.locationRequest;
+    this.form.controls.cityCode.reset('');
+    this.form.controls.cityCode.disable();
+    this.municipalities.set([]);
+    this.cityError.set('');
+    this.departmentError.set('');
+    this.locationError.set('');
+    this.citiesLoading.set(!!code);
+    if (!code) return;
+    try {
+      const municipalities = await this.auth.municipalities(code);
+      if (request !== this.locationRequest || this.destroyRef.destroyed) return;
+      this.municipalities.set(municipalities);
+      if (municipalities.length) this.form.controls.cityCode.enable();
+      else this.locationError.set('No hay municipios disponibles. Intenta cargarlos de nuevo.');
+    } catch (e) {
+      if (request !== this.locationRequest || this.destroyRef.destroyed) return;
+      this.locationError.set(
+        e instanceof ApiError ? e.message : 'No pudimos cargar los municipios.',
+      );
+    } finally {
+      if (request === this.locationRequest && !this.destroyRef.destroyed)
+        this.citiesLoading.set(false);
+    }
+  }
+  async retryLocations(): Promise<void> {
+    if (this.departmentsLoading() || this.citiesLoading() || this.loading()) return;
+    if (!this.departments().length) await this.loadDepartments();
+    else await this.loadMunicipalities(this.form.controls.departmentCode.value);
+  }
+  async save(): Promise<void> {
+    if (
+      this.loading() ||
+      !this.profileReady() ||
+      this.initializing() ||
+      this.citiesLoading() ||
+      this.departmentsLoading() ||
+      this.locationError()
+    )
+      return;
     this.formError.set('');
     this.nameError.set('');
     this.departmentError.set('');
     this.cityError.set('');
-    if (this.form.invalid) {
-      if (this.form.controls.name.invalid) this.nameError.set('Escribe tu nombre.');
-      if (this.form.controls.departmentCode.invalid)
+    this.form.controls.name.setValue(this.form.controls.name.value.trim());
+    if (
+      this.form.invalid ||
+      !this.form.controls.departmentCode.value ||
+      !this.form.controls.cityCode.value
+    ) {
+      this.form.markAllAsTouched();
+      afterNextRender(
+        () =>
+          this.element.nativeElement.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
+        { injector: this.injector },
+      );
+      if (this.form.controls.name.invalid)
+        this.nameError.set('Escribe tu nombre con al menos 2 caracteres.');
+      if (!this.form.controls.departmentCode.value)
         this.departmentError.set('Selecciona tu departamento.');
-      if (this.form.controls.cityCode.invalid) this.cityError.set('Selecciona tu municipio.');
+      if (!this.form.controls.cityCode.value) this.cityError.set('Selecciona tu municipio.');
       return;
     }
     this.loading.set(true);
     try {
       await this.auth.updateProfile(
-        this.form.controls.name.value.trim(),
+        this.form.controls.name.value,
         this.form.controls.cityCode.value,
       );
       await this.router.navigateByUrl('/cuenta');

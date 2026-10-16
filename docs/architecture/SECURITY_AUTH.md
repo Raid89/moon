@@ -25,7 +25,7 @@ Proveedor de email y antiabuso; almacenamiento/tiempo de vida de challenges; pol
 
 - MongoDB/Mongoose persiste usuarios, challenges y sesiones. Los códigos son HMAC, vencen a los cinco minutos, permiten cinco intentos y se consumen atómicamente.
 - Sesiones opacas tienen vida de siete días, se almacenan como hash y se revocan con logout. La cookie es `HttpOnly`, `SameSite=Lax` y pasa a `Secure` en producción.
-- Los límites son atómicos por correo/IP y ventana de una hora; el reenvío espera un minuto. SMTP y `OTP_SECRET` deben configurarse en el entorno antes de habilitar el flujo real.
+- Los límites son atómicos por correo/IP y ventana de una hora; el reenvío espera un minuto. Resend (`RESEND_API_KEY`, `RESEND_FROM`) y `OTP_SECRET` deben configurarse en el entorno antes de habilitar el flujo real.
 
 ## Pruebas mínimas
 

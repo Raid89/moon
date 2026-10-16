@@ -1,39 +1,36 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodemailer, { type Transporter } from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  private readonly transporter?: Transporter;
+  private readonly resend?: Resend;
   constructor(private readonly config: ConfigService) {
-    const smtp = this.config.get<{
-      host: string;
-      port: number;
-      secure: boolean;
-      user: string;
-      password: string;
-      from: string;
-    }>('app.smtp');
-    if (smtp?.host && smtp.user && smtp.password && smtp.from)
-      this.transporter = nodemailer.createTransport({
-        host: smtp.host,
-        port: smtp.port,
-        secure: smtp.secure,
-        auth: { user: smtp.user, pass: smtp.password },
-      });
+    const apiKey = this.config.get<string>('app.resend.apiKey');
+    if (apiKey) this.resend = new Resend(apiKey);
   }
   async sendOtp(to: string, code: string): Promise<void> {
-    if (!this.transporter)
+    const from = this.config.get<string>('app.resend.from');
+    if (!this.resend || !from)
       throw new ServiceUnavailableException({
-        code: 'MAIL_NOT_CONFIGURED',
-        message: 'El acceso por correo aún no está configurado.',
+        code: 'RESEND_NOT_CONFIGURED',
+        message: 'El envío de correo aún no está configurado.',
       });
-    await this.transporter.sendMail({
-      from: this.config.get<string>('app.smtp.from'),
-      to,
-      subject: 'Tu código para Moon',
-      text: `Tu código para Moon es ${code}. Vence en 5 minutos.`,
-      html: `<p>Tu código para Moon es:</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>Vence en 5 minutos. No lo compartas con nadie.</p>`,
+    try {
+      const { error } = await this.resend.emails.send({
+        from,
+        to,
+        subject: 'Tu código para Moon',
+        text: `Tu código para Moon es ${code}. Vence en 5 minutos.`,
+        html: `<p>Tu código para Moon es:</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>Vence en 5 minutos. No lo compartas con nadie.</p>`,
+      });
+      if (!error) return;
+    } catch {
+      // The public error must not reveal provider or network internals.
+    }
+    throw new ServiceUnavailableException({
+      code: 'EMAIL_DELIVERY_FAILED',
+      message: 'No pudimos enviar el código. Intenta de nuevo en unos minutos.',
     });
   }
 }

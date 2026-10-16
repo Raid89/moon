@@ -1,0 +1,224 @@
+:host {
+  display: block;
+}
+.auth-page {
+  display: grid;
+  min-height: 100svh;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: var(--moon-space-4);
+  gap: var(--moon-space-4);
+}
+.welcome {
+  background: var(--moon-brand);
+  color: var(--moon-ink);
+  border-radius: var(--moon-radius-lg);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.wordmark,
+.mobile-brand {
+  font: var(--moon-font-display);
+  font-size: 2.25rem;
+  letter-spacing: -0.08em;
+  margin: 0;
+}
+.wordmark span,
+.mobile-brand span {
+  font-size: 1.25rem;
+  vertical-align: top;
+  margin-left: var(--moon-space-2);
+}
+.welcome-copy {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(2rem, 5vh, 4rem);
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  margin: 0 0 var(--moon-space-4);
+}
+h2 {
+  font: var(--moon-font-display);
+  font-size: clamp(2.75rem, 4.4vw, 5rem);
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+  margin: 0;
+}
+h2 em {
+  font-style: normal;
+  color: var(--moon-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--moon-white);
+  text-underline-offset: 0.12em;
+}
+.welcome-copy > p:last-child {
+  max-width: 24rem;
+  line-height: 1.65;
+  margin: var(--moon-space-5) 0 0;
+}
+.art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 16rem;
+}
+.art img {
+  width: clamp(14rem, 24vw, 22rem);
+  height: auto;
+  position: relative;
+  transform: var(--auth-mascot-transform, rotate(-7deg));
+}
+.orbit {
+  position: absolute;
+  width: 75%;
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.18;
+}
+.spark {
+  position: absolute;
+  top: 15%;
+  right: 8%;
+  font-size: 3rem;
+}
+.sticker {
+  position: absolute;
+  bottom: 8%;
+  right: 0;
+  transform: rotate(-8deg);
+  padding: var(--moon-space-3) var(--moon-space-4);
+  background: var(--moon-white);
+  border-radius: var(--moon-radius-pill);
+  font-size: 0.875rem;
+  font-weight: 750;
+  box-shadow: var(--moon-shadow-float);
+}
+.welcome-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--moon-space-2);
+  font-size: 0.75rem;
+  font-weight: 650;
+  margin: var(--moon-space-5) 0 0;
+}
+.access {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--moon-space-6) clamp(1rem, 5vw, 5rem);
+  min-width: 0;
+}
+.content {
+  max-width: 28rem;
+  width: 100%;
+  margin: auto;
+}
+.steps {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--moon-space-2);
+  padding: 0;
+  margin: 0 0 clamp(2rem, 6vh, 4rem);
+  list-style: none;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--moon-space-2);
+  color: var(--moon-text-faint);
+  font-size: 0.75rem;
+}
+.step-number {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--moon-border-strong);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.current {
+  color: var(--moon-text) !important;
+  font-weight: 750;
+}
+.current .step-number {
+  background: var(--moon-brand);
+  color: var(--moon-ink);
+  border-color: var(--moon-brand);
+}
+.complete .step-number {
+  color: var(--moon-success);
+  border-color: var(--moon-success);
+}
+.heading .eyebrow {
+  color: var(--moon-brand-soft);
+}
+h1 {
+  font: var(--moon-font-display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  margin: 0;
+  text-wrap: balance;
+}
+.description {
+  color: var(--moon-text-muted);
+  line-height: 1.65;
+  margin: var(--moon-space-4) 0 var(--moon-space-6);
+}
+.access-foot {
+  color: var(--moon-text-faint);
+  text-align: center;
+  font-size: 0.75rem;
+  margin: var(--moon-space-6) 0 0;
+}
+.access-foot span {
+  color: var(--moon-brand);
+  margin-left: var(--moon-space-2);
+}
+.mobile-brand {
+  display: none;
+}
+@media (max-width: 850px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .welcome {
+    display: none;
+  }
+  .access {
+    padding: var(--moon-space-5);
+  }
+  .mobile-brand {
+    display: block;
+    margin-bottom: var(--moon-space-6);
+    color: var(--moon-text);
+  }
+  .mobile-brand span {
+    color: var(--moon-brand);
+  }
+  .content {
+    margin-block: auto;
+  }
+  .steps {
+    margin-bottom: var(--moon-space-6);
+  }
+}
+@media (max-width: 360px) {
+  .access {
+    padding: var(--moon-space-4);
+  }
+  .steps li {
+    gap: 0.35rem;
+    font-size: 0.7rem;
+  }
+}

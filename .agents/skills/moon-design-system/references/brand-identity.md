@@ -4,6 +4,20 @@
 Moon es una marca enfocada en conectar personas alrededor de planes, experiencias y momentos reales.
 Su identidad visual debe transmitir cercanía, emoción, energía social y sentido de aventura.
 
+## Logos oficiales [CONFIRMADO]
+
+Los archivos oficiales están en `apps/web/public/`:
+
+| Uso | Archivo | Ruta pública en la UI |
+| --- | --- | --- |
+| Logo con el personaje de Moon | `moon_logo.png` | `/moon_logo.png` |
+| Logo solo de letras blancas, sin personaje | `moon_logo_letra_blanco.png` | `/moon_logo_letra_blanco.png` |
+
+Cuando se necesite el logo con el personaje, usar `moon_logo.png`. Cuando se necesite solo el
+nombre de Moon en letras blancas, usar `moon_logo_letra_blanco.png` sobre un fondo con contraste
+suficiente. Conservar las proporciones originales y usar estos assets directamente, sin recortar
+el personaje del logo completo ni recrear las letras con una fuente.
+
 ## Idea central de marca
 Moon representa un lugar donde las personas pueden:
 - unirse a planes,

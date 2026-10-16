@@ -29,6 +29,21 @@ cupos y completar la inscripción; no debe convertirse en un dashboard genérico
 Los componentes son standalone y usan `ChangeDetectionStrategy.OnPush`. Sus estilos dependen de los
 tokens globales; conserva `src/styles.scss` en la aplicación consumidora.
 
+## Logos oficiales [CONFIRMADO]
+
+| Uso                                        | Archivo en `apps/web/public/` | `src` en la UI                |
+| ------------------------------------------ | ----------------------------- | ----------------------------- |
+| Logo con el personaje de Moon              | `moon_logo.png`               | `/moon_logo.png`              |
+| Logo solo de letras blancas, sin personaje | `moon_logo_letra_blanco.png`  | `/moon_logo_letra_blanco.png` |
+
+Usa el archivo correspondiente a la variante requerida, conserva sus proporciones y asegura
+contraste suficiente para las letras blancas. No recortes el logo con personaje para obtener
+la variante de solo letras ni recrees el logo con texto. Si la imagen identifica la marca,
+usa `alt="Moon"`; si es decorativa y el nombre ya está presente en el mismo contexto, usa `alt=""`.
+
+La referencia de marca está en
+[`brand-identity.md`](../../.agents/skills/moon-design-system/references/brand-identity.md#logos-oficiales-confirmado).
+
 ## Fundaciones
 
 | Propósito    | Tokens principales                                                                |
@@ -294,3 +309,20 @@ Verifica como mínimo:
 ./node_modules/.bin/prettier --check apps/web/src/app docs/frontend/UI_COMPONENTS.md
 pnpm --filter @moon/web build
 ```
+
+## Composición de acceso
+
+`apps/web/src/app/auth/auth-layout/auth-layout.ts` compone la bienvenida y los pasos de acceso para
+login y perfil. Es local a la funcionalidad de autenticación; sus inputs son `step` (`1 | 2 | 3`),
+`eyebrow`, `heading` y `description`, todos requeridos. Proyecta el formulario con `ng-content`,
+identifica el paso con `aria-current="step"` y comparte el encabezado accesible de la sección.
+Los formularios siguen usando `Button`, `Input` y `Select` desde el barrel; sus APIs no cambian.
+`auth-form.scss` concentra los estilos de esta composición sin modificar el kit global.
+
+El movimiento de acceso está en `apps/web/src/app/auth/auth-motion.scss`, importado desde
+`styles.scss` y limitado al selector `app-auth-layout` para alcanzar también los formularios
+proyectados. Usa entradas escalonadas, transiciones del indicador de pasos y reacciones a hover
+solo en dispositivos con puntero preciso. El encabezado se recrea por paso con `animate.enter`;
+los errores usan la misma API de Angular. No hay animaciones decorativas en bucle ni esperas
+artificiales antes de enviar formularios. `prefers-reduced-motion: reduce` desactiva animaciones
+y transiciones en toda la composición.

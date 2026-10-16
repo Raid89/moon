@@ -1,0 +1,134 @@
+app-auth-layout {
+  @keyframes moon-auth-arrive {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  .heading {
+    animation: moon-auth-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out) backwards;
+  }
+  // A short introduction; the form is usable throughout and the scene settles at rest.
+  .welcome,
+  .wordmark,
+  .mobile-brand,
+  .welcome-copy,
+  .art,
+  .welcome-foot,
+  .steps {
+    animation: moon-auth-arrive calc(var(--moon-duration-medium) * 3) var(--moon-ease-out) backwards;
+  }
+  .welcome-copy,
+  .steps {
+    animation-delay: calc(var(--moon-duration-fast) / 2);
+  }
+  .art {
+    animation-delay: var(--moon-duration-fast);
+  }
+  .welcome-foot {
+    animation-delay: var(--moon-duration-medium);
+  }
+  .steps li,
+  .step-number {
+    transition:
+      color var(--moon-duration-medium),
+      background-color var(--moon-duration-medium),
+      border-color var(--moon-duration-medium),
+      transform var(--moon-duration-medium) var(--moon-ease-out);
+  }
+  .current .step-number {
+    transform: scale(1.08);
+  }
+  .art img,
+  .sticker,
+  .spark {
+    transition: transform calc(var(--moon-duration-medium) * 2) var(--moon-ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .art:hover {
+      --auth-mascot-transform: translateY(-6px) rotate(-3deg);
+    }
+    .art:hover .sticker {
+      transform: translateY(-3px) rotate(-4deg);
+    }
+    .art:hover .spark {
+      transform: rotate(30deg) scale(1.1);
+    }
+  }
+  // Animate mount and state feedback, not countdown ticks or field values.
+  form,
+  .email-preview,
+  .support,
+  .status,
+  .feedback-enter {
+    animation: moon-auth-form-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out)
+      backwards;
+  }
+  fieldset > moon-input,
+  fieldset > moon-select,
+  .location-fields > moon-select,
+  fieldset > moon-button {
+    animation: moon-auth-form-arrive calc(var(--moon-duration-medium) * 2) var(--moon-ease-out)
+      backwards;
+  }
+  fieldset > :nth-child(2),
+  .location-fields > :nth-child(1) {
+    animation-delay: calc(var(--moon-duration-fast) / 3);
+  }
+  fieldset > :nth-child(3),
+  .location-fields > :nth-child(2) {
+    animation-delay: calc(var(--moon-duration-fast) * 2 / 3);
+  }
+  fieldset > moon-button {
+    animation-delay: var(--moon-duration-fast);
+  }
+  .link-button,
+  moon-button [aria-hidden] {
+    transition:
+      transform var(--moon-duration-medium) var(--moon-ease-out),
+      color var(--moon-duration-fast),
+      opacity var(--moon-duration-fast);
+  }
+  moon-button [aria-hidden] {
+    display: inline-block;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    moon-button:hover [aria-hidden] {
+      transform: translateX(3px);
+    }
+  }
+  @keyframes moon-auth-form-arrive {
+    from {
+      opacity: 0;
+      translate: 0 8px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .art:hover {
+      --auth-mascot-transform: rotate(-7deg);
+    }
+    .art:hover .sticker {
+      transform: rotate(-8deg);
+    }
+    .art:hover .spark,
+    .current .step-number,
+    moon-button:hover [aria-hidden] {
+      transform: none;
+    }
+  }
+}

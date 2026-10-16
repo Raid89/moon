@@ -4,7 +4,7 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev --continue=always",
     "dev:web": "pnpm --filter @moon/web dev",
     "dev:api": "pnpm --filter @moon/api dev",
     "lint": "turbo run lint",

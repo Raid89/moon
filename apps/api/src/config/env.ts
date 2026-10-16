@@ -5,13 +5,9 @@ export const appConfig = registerAs('app', () => ({
   port: Number(process.env.PORT ?? 3000),
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:4200',
   otpSecret: process.env.OTP_SECRET ?? '',
-  smtp: {
-    host: process.env.SMTP_HOST ?? '',
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: process.env.SMTP_SECURE === 'true',
-    user: process.env.SMTP_USER ?? '',
-    password: process.env.SMTP_PASSWORD ?? '',
-    from: process.env.SMTP_FROM ?? '',
+  resend: {
+    apiKey: process.env.RESEND_API_KEY ?? '',
+    from: process.env.RESEND_FROM ?? '',
   },
 }));
 
