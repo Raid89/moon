@@ -218,10 +218,11 @@ export class AuthService {
     return COOKIE;
   }
   cookieOptions() {
+    const isProduction = this.config.get<boolean>('app.isProduction') ?? false;
     return {
       httpOnly: true,
-      sameSite: 'lax' as const,
-      secure: this.config.get<boolean>('app.isProduction') ?? false,
+      sameSite: isProduction ? ('none' as const) : ('lax' as const),
+      secure: isProduction,
       maxAge: SESSION_TTL_MS,
       path: '/',
     };

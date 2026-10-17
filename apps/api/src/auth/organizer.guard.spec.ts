@@ -10,7 +10,11 @@ import { AuthService } from './auth.service.js';
 import { OrganizerGuard } from './organizer.guard.js';
 
 const query = (value: unknown) => ({ exec: vi.fn().mockResolvedValue(value) });
-function setup(email = 'team@example.com', storedRole = 'USER') {
+function setup(
+  email = 'team@example.com',
+  storedRole = 'USER',
+  isProduction = false,
+) {
   const user = {
     email,
     role: storedRole,
@@ -21,7 +25,11 @@ function setup(email = 'team@example.com', storedRole = 'USER') {
   const users = { findById: vi.fn(() => query(user)) };
   const sessions = { findOne: vi.fn(() => query({ userId: 'user' })) };
   const config = new ConfigService({
-    app: { otpSecret: 'test-secret', organizerEmails: ['team@example.com'] },
+    app: {
+      isProduction,
+      otpSecret: 'test-secret',
+      organizerEmails: ['team@example.com'],
+    },
   });
   const auth = new AuthService(
     users as never,
@@ -78,6 +86,25 @@ describe('Organizer authorization', () => {
       new OrganizerGuard(auth).canActivate(context().ctx),
     ).rejects.toMatchObject({ response: { code: 'PROFILE_INCOMPLETE' } });
   });
+});
+
+describe('Session cookie', () => {
+  it.each([
+    { isProduction: false, sameSite: 'lax', secure: false },
+    { isProduction: true, sameSite: 'none', secure: true },
+  ])(
+    'uses secure cross-site settings in production',
+    ({ isProduction, sameSite, secure }) => {
+      const { auth } = setup('team@example.com', 'USER', isProduction);
+
+      expect(auth.cookieOptions()).toMatchObject({
+        httpOnly: true,
+        sameSite,
+        secure,
+        path: '/',
+      });
+    },
+  );
 });
 
 describe('Organizer role during OTP registration', () => {
