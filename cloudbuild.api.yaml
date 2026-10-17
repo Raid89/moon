@@ -1,7 +1,7 @@
 substitutions:
   _REGION: europe-west1
   _REPOSITORY: cloud-run-source-deploy
-  _SERVICE: moon-api
+  _SERVICE: moonapi
 
 steps:
   - name: gcr.io/cloud-builders/docker
