@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ApiError } from './auth.service';
+import { apiUrl } from './api-url';
 
 export interface EventInput {
   title: string;
@@ -26,38 +27,51 @@ export interface MoonEvent extends EventInput {
 @Injectable({ providedIn: 'root' })
 export class EventsService {
   private readonly http = inject(HttpClient);
-  list(page: number) {
-    return this.call(
+  async list(page: number) {
+    const result = await this.call(
       this.http.get<{ events: MoonEvent[]; total: number; pageSize: number }>(
-        '/api/organizer/events',
+        apiUrl('organizer/events'),
         { params: { page } },
       ),
     );
+    return { ...result, events: result.events.map((event) => this.withAbsoluteImageUrls(event)) };
   }
-  get(id: string) {
-    return this.call(this.http.get<{ event: MoonEvent }>(`/api/organizer/events/${id}`));
+  async get(id: string) {
+    const result = await this.call(
+      this.http.get<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}`)),
+    );
+    return { event: this.withAbsoluteImageUrls(result.event) };
   }
-  save(id: string | null, data: EventInput) {
-    return this.call(
+  async save(id: string | null, data: EventInput) {
+    const result = await this.call(
       id
-        ? this.http.patch<{ event: MoonEvent }>(`/api/organizer/events/${id}`, data)
-        : this.http.post<{ event: MoonEvent }>('/api/organizer/events', data),
+        ? this.http.patch<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}`), data)
+        : this.http.post<{ event: MoonEvent }>(apiUrl('organizer/events'), data),
     );
+    return { event: this.withAbsoluteImageUrls(result.event) };
   }
-  publish(id: string) {
-    return this.call(
-      this.http.post<{ event: MoonEvent }>(`/api/organizer/events/${id}/publish`, {}),
+  async publish(id: string) {
+    const result = await this.call(
+      this.http.post<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}/publish`), {}),
     );
+    return { event: this.withAbsoluteImageUrls(result.event) };
   }
-  uploadCover(id: string, file: File) {
+  async uploadCover(id: string, file: File) {
     const data = new FormData();
     data.append('file', file);
-    return this.call(
-      this.http.post<{ event: MoonEvent }>(`/api/organizer/events/${id}/cover`, data),
+    const result = await this.call(
+      this.http.post<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}/cover`), data),
     );
+    return { event: this.withAbsoluteImageUrls(result.event) };
   }
-  removeCover(id: string) {
-    return this.call(this.http.delete<{ event: MoonEvent }>(`/api/organizer/events/${id}/cover`));
+  async removeCover(id: string) {
+    const result = await this.call(
+      this.http.delete<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}/cover`)),
+    );
+    return { event: this.withAbsoluteImageUrls(result.event) };
+  }
+  private withAbsoluteImageUrls(event: MoonEvent): MoonEvent {
+    return { ...event, imageUrls: event.imageUrls.map((url) => apiUrl(url)) };
   }
   private async call<T>(request: Observable<T>): Promise<T> {
     try {

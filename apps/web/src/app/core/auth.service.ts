@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { apiUrl } from './api-url';
 
 export interface MoonUser {
   id: string;
@@ -34,19 +35,19 @@ export class AuthService {
   readonly user = signal<MoonUser | null>(null);
   async requestOtp(email: string) {
     return this.call<{ challengeId: string; expiresAt: string; resendAvailableAt: string }>(
-      this.http.post('/api/auth/otp/request', { email }),
+      this.http.post(apiUrl('auth/otp/request'), { email }),
     );
   }
   async verifyOtp(challengeId: string, code: string) {
     const result = await this.call<{ user: MoonUser }>(
-      this.http.post('/api/auth/otp/verify', { challengeId, code }),
+      this.http.post(apiUrl('auth/otp/verify'), { challengeId, code }),
     );
     this.user.set(result.user);
     return result.user;
   }
   async loadUser() {
     try {
-      const result = await this.call<{ user: MoonUser }>(this.http.get('/api/auth/me'));
+      const result = await this.call<{ user: MoonUser }>(this.http.get(apiUrl('auth/me')));
       this.user.set(result.user);
       return result.user;
     } catch (error) {
@@ -58,25 +59,25 @@ export class AuthService {
     }
   }
   async logout() {
-    await this.call(this.http.post('/api/auth/logout', {}));
+    await this.call(this.http.post(apiUrl('auth/logout'), {}));
     this.user.set(null);
   }
   async updateProfile(name: string, cityCode: string) {
     const result = await this.call<{ user: MoonUser }>(
-      this.http.patch('/api/users/me', { name, cityCode }),
+      this.http.patch(apiUrl('users/me'), { name, cityCode }),
     );
     this.user.set(result.user);
     return result.user;
   }
   async departments() {
     return (
-      await this.call<{ departments: Department[] }>(this.http.get('/api/locations/departments'))
+      await this.call<{ departments: Department[] }>(this.http.get(apiUrl('locations/departments')))
     ).departments;
   }
   async municipalities(departmentCode: string) {
     return (
       await this.call<{ municipalities: Municipality[] }>(
-        this.http.get('/api/locations/municipalities', { params: { departmentCode } }),
+        this.http.get(apiUrl('locations/municipalities'), { params: { departmentCode } }),
       )
     ).municipalities;
   }
