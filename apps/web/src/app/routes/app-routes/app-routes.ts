@@ -1,4 +1,5 @@
 import { organizerGuard } from '../../core/guards/organizer/organizer.guard';
+import { sessionRedirectGuard } from '../../core/guards/session-redirect/session-redirect.guard';
 import { Routes } from '@angular/router';
 import { Account } from '../../features/account/account/account';
 import { Login } from '../../features/auth/login/login';
@@ -33,7 +34,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('../../features/organizer/event-editor/event-editor').then((m) => m.EventEditor),
   },
-  { path: 'login', component: Login },
+  { path: 'login', component: Login, canActivate: [sessionRedirectGuard] },
   { path: 'completar-perfil', component: Profile },
   { path: 'cuenta', component: Account },
   { path: 'ui-kit', component: UiKit },
