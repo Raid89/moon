@@ -10,6 +10,14 @@
 6. Se muestra inscripción confirmada o un error accionable (sin cupos, evento cancelado, ya inscrito, etc.).
 7. En `Mis eventos` visualiza inscripción y, si está habilitado, la cancela.
 
+### Catálogo público — implementado 2026-10-18
+
+`/eventos` es la entrada pública de Moon y adapta la misma vista a móvil y escritorio. Muestra solo
+próximos eventos publicados, permite buscar por texto, filtrar por ciudad y cargar más resultados.
+Comunica carga, error recuperable, catálogo vacío y ausencia de resultados. Hasta implementar
+inscripciones, cada tarjeta comunica `0/capacidad` sin inferir ni mostrar asistentes; el detalle y
+la inscripción continúan fuera de este alcance.
+
 ## B. Acceso por email OTP [confirmado a nivel de mecanismo]
 
 1. Introducir email.

@@ -18,6 +18,20 @@ Las rutas de autenticación están bajo `/api`. `POST /auth/otp/request` recibe 
 `{ user }`. `GET /auth/me`, `POST /auth/logout` y `PATCH /users/me` completan la sesión y el perfil.
 El perfil recibe `{ name, cityCode }`, donde `cityCode` es el código DIVIPOLA de cinco caracteres.
 
+## Implementado: catálogo público de eventos
+
+`GET /api/events?page=1&q=&cityCode=` devuelve únicamente eventos `PUBLISHED` cuya fecha de
+inicio no ha pasado, ordenados por fecha ascendente. La página fija contiene hasta 12 eventos;
+`q` busca título, sede, dirección o ciudad y `cityCode` filtra por municipio DIVIPOLA. La respuesta
+es `{ events, total, page, pageSize }` y cada elemento público contiene solo identificador, título,
+fecha/zona horaria, sede, dirección, ciudad, capacidad, `confirmedCount`, y `imageUrls`.
+
+Mientras no exista el módulo de inscripciones, `confirmedCount` es siempre `0`; nunca representa
+datos simulados de asistentes. `GET /api/events/cities` lista los municipios con próximos eventos
+publicados para el selector del catálogo. `GET /api/events/:id/images/:imageKey` entrega una portada
+solo cuando pertenece a un evento publicado. El bucket R2 permanece privado y estas rutas no
+exponen URL ni credenciales de almacenamiento.
+
 `GET /api/locations/departments` y `GET /api/locations/municipalities?departmentCode=05` entregan el
 catálogo usado por el formulario. Los errores usan `{ code, message, requestId }`.
 | `GET` | `/events` | Público | Listado paginado de publicados |

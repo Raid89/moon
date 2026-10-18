@@ -24,6 +24,7 @@ import {
   EventImageParamsDto,
   EventListDto,
   EventParamsDto,
+  PublicEventListDto,
   SaveEventDto,
 } from './events.dto.js';
 import { EventsService } from './events.service.js';
@@ -101,6 +102,34 @@ export class EventsController {
     );
     response.set({
       'Cache-Control': 'private, no-store',
+      'Content-Type': image.contentType,
+      'X-Content-Type-Options': 'nosniff',
+    });
+    response.send(image.bytes);
+  }
+}
+
+@Controller('events')
+export class PublicEventsController {
+  constructor(private readonly events: EventsService) {}
+
+  @Get('cities') cities() {
+    return this.events.publicCities().then((cities) => ({ cities }));
+  }
+
+  @Get()
+  list(@Query() query: PublicEventListDto) {
+    return this.events.listPublic(query);
+  }
+
+  @Get(':id/images/:imageKey')
+  async image(
+    @Param() params: EventImageParamsDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const image = await this.events.publicImage(params.id, params.imageKey);
+    response.set({
+      'Cache-Control': 'public, max-age=3600',
       'Content-Type': image.contentType,
       'X-Content-Type-Options': 'nosniff',
     });

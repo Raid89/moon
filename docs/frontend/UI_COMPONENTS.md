@@ -29,6 +29,20 @@ cupos y completar la inscripción; no debe convertirse en un dashboard genérico
 Los componentes son standalone y usan `ChangeDetectionStrategy.OnPush`. Sus estilos dependen de los
 tokens globales; conserva `src/styles.scss` en la aplicación consumidora.
 
+## Iconos
+
+La aplicación usa [Material Symbols Rounded](https://fonts.google.com/icons) cargado de forma
+global en `src/index.html`. Para iconos decorativos o que complementen texto, usa un `span` con la
+clase `material-symbols-rounded` y el nombre oficial del símbolo; mantenlo con `aria-hidden="true"`
+cuando ya exista una etiqueta accesible.
+
+```html
+<span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+```
+
+`moon-empty-state` recibe en `icon` el nombre de un símbolo de Material, por ejemplo
+`icon="auto_awesome"`.
+
 Cada primitiva ocupa su propia carpeta bajo `shared/ui/` y conserva sus archivos con el mismo
 nombre base (`button.ts`, `button.html`, `button.scss`, por ejemplo). El barrel
 `shared/ui/index.ts` es la única superficie pública para consumidores.

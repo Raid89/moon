@@ -8,7 +8,10 @@
     <p class="status" role="status">Preparando tu perfil…</p>
   }
   @if (profileReady()) {
-    <p class="status">✓ Correo verificado. Este es el último paso.</p>
+    <p class="status">
+      <span class="material-symbols-rounded" aria-hidden="true">check_circle</span> Correo
+      verificado. Este es el último paso.
+    </p>
   }
   <form
     [formGroup]="form"
@@ -61,7 +64,7 @@
         "
       >
         {{ loading() ? 'Guardando tu perfil…' : 'Guardar y continuar' }}
-        <span aria-hidden="true">↗</span>
+        <span class="material-symbols-rounded" aria-hidden="true">north_east</span>
       </moon-button>
     </fieldset>
     @if (formError()) {

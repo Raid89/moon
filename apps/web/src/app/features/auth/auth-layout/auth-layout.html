@@ -10,11 +10,19 @@
     </div>
     <div class="art" aria-hidden="true">
       <div class="orbit"></div>
-      <span class="spark">✦</span>
+      <span class="spark material-symbols-rounded">auto_awesome</span>
       <img src="/moon_logo.png" alt="" width="1280" height="1280" fetchpriority="high" />
-      <span class="sticker">Nos vemos allá ↗</span>
+      <span class="sticker"
+        >Nos vemos allá
+        <span class="material-symbols-rounded" aria-hidden="true">north_east</span></span
+      >
     </div>
-    <p class="welcome-foot">Personas nuevas. Experiencias reales. <span>Colombia ↗</span></p>
+    <p class="welcome-foot">
+      Personas nuevas. Experiencias reales.
+      <span
+        >Colombia <span class="material-symbols-rounded" aria-hidden="true">north_east</span></span
+      >
+    </p>
   </aside>
   <section class="access" aria-labelledby="auth-title">
     <p class="mobile-brand">
@@ -29,7 +37,13 @@
               [class.complete]="step() > i + 1"
               [attr.aria-current]="step() === i + 1 ? 'step' : null"
             >
-              <span class="step-number" aria-hidden="true">{{ step() > i + 1 ? '✓' : i + 1 }}</span>
+              <span class="step-number" aria-hidden="true">
+                @if (step() > i + 1) {
+                  <span class="material-symbols-rounded">check</span>
+                } @else {
+                  {{ i + 1 }}
+                }
+              </span>
               {{ label }}
             </li>
           }
@@ -46,6 +60,9 @@
       </div>
       <ng-content />
     </div>
-    <p class="access-foot">Hecho para encontrarnos <span aria-hidden="true">✦</span></p>
+    <p class="access-foot">
+      Hecho para encontrarnos
+      <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+    </p>
   </section>
 </main>

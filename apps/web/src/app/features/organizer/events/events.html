@@ -14,7 +14,7 @@
         Mis eventos <span class="muted">({{ total() }})</span>
       </h2>
       <a class="action-link" routerLink="/organizador/eventos/nuevo"
-        >Crear evento <span aria-hidden="true">＋</span></a
+        >Crear evento <span class="material-symbols-rounded" aria-hidden="true">add</span></a
       >
     </div>
     @if (error()) {
@@ -28,7 +28,7 @@
       <moon-empty-state
         title="Tu próximo encuentro empieza aquí"
         description="Crea tu primer evento y guárdalo como borrador hasta tenerlo listo."
-        icon="✦"
+        icon="auto_awesome"
       />
     } @else {
       <div class="event-grid">
@@ -55,9 +55,10 @@
                 <span class="muted">(Colombia)</span>
               </p>
               <p class="muted">{{ event.cityName }} · {{ event.capacity }} cupos</p>
-              <a [routerLink]="['/organizador/eventos', event.id]">{{
-                event.status === 'DRAFT' ? 'Configurar evento →' : 'Ver detalles →'
-              }}</a>
+              <a [routerLink]="['/organizador/eventos', event.id]"
+                >{{ event.status === 'DRAFT' ? 'Configurar evento' : 'Ver detalles' }}
+                <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></a
+              >
             </div>
           </article>
         }

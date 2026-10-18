@@ -20,7 +20,8 @@
     @if (user()!.role === 'ORGANIZER') {
       <p>
         <a routerLink="/organizador/eventos" style="color: var(--moon-brand-soft)"
-          >Gestionar mis eventos →</a
+          >Gestionar mis eventos
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></a
         >
       </p>
     }

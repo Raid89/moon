@@ -11,7 +11,9 @@
         <p class="eyebrow">{{ eyebrow() }}</p>
         <h2 class="title" [id]="titleId">{{ title() }}</h2>
       </div>
-      <button class="close" type="button" aria-label="Cerrar ventana" (click)="close()">×</button>
+      <button class="close" type="button" aria-label="Cerrar ventana" (click)="close()">
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
     </div>
     @if (description()) {
       <p class="description">{{ description() }}</p>

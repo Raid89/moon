@@ -23,3 +23,4 @@ export class MoonEvent {
 }
 export const MoonEventSchema = SchemaFactory.createForClass(MoonEvent);
 MoonEventSchema.index({ organizerId: 1, _id: -1 });
+MoonEventSchema.index({ status: 1, startsAt: 1 });

@@ -25,7 +25,7 @@
         />
         <moon-button type="submit" size="lg" [loading]="loading()">
           {{ loading() ? 'Enviando código…' : 'Continuar con mi correo' }}
-          <span aria-hidden="true">↗</span>
+          <span class="material-symbols-rounded" aria-hidden="true">north_east</span>
         </moon-button>
       </fieldset>
       @if (emailError()) {
@@ -65,7 +65,7 @@
         />
         <moon-button type="submit" size="lg" [loading]="loading()" [disabled]="expired()">
           {{ loading() ? 'Verificando…' : 'Verificar y continuar' }}
-          <span aria-hidden="true">→</span>
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
         </moon-button>
       </fieldset>
       @if (codeError()) {

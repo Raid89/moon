@@ -8,6 +8,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class EmptyState {
   readonly description = input('Prueba cambiar tus filtros o crea algo nuevo para empezar.');
-  readonly icon = input('✦');
+  readonly icon = input('auto_awesome');
   readonly title = input('Aún no hay nada por aquí');
 }

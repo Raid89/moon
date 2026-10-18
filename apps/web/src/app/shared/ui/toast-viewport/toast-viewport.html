@@ -4,14 +4,14 @@
       class="toast {{ toast.tone }}"
       [attr.role]="toast.tone === 'error' ? 'alert' : 'status'"
     >
-      <span class="symbol" aria-hidden="true">{{ symbol(toast.tone) }}</span
+      <span class="symbol material-symbols-rounded" aria-hidden="true">{{ icon(toast.tone) }}</span
       ><strong>{{ toast.title }}</strong>
       <button
         type="button"
         [attr.aria-label]="'Cerrar: ' + toast.title"
         (click)="toastService.dismiss(toast.id)"
       >
-        ×
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
       <span class="message">{{ toast.message }}</span>
     </article>

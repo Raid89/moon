@@ -41,4 +41,17 @@ export class LocationsService {
   municipality(code: string) {
     return municipalities.find((item) => item.code === code);
   }
+  matchingMunicipalityCodes(query: string) {
+    const normalizedQuery = normalize(query);
+    return municipalities
+      .filter((item) => normalize(item.name).includes(normalizedQuery))
+      .map((item) => item.code);
+  }
+}
+
+function normalize(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLocaleLowerCase('es');
 }

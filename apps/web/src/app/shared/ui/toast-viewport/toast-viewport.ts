@@ -9,7 +9,7 @@ import { ToastService, type ToastTone } from '../toast/toast';
 })
 export class ToastViewport {
   protected readonly toastService = inject(ToastService);
-  protected symbol(tone: ToastTone): string {
-    return tone === 'success' ? '✓' : tone === 'error' ? '!' : 'i';
+  protected icon(tone: ToastTone): string {
+    return tone === 'success' ? 'check_circle' : tone === 'error' ? 'error' : 'info';
   }
 }

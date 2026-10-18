@@ -173,3 +173,103 @@ describe('Organizer events', () => {
     expect(event.activityDescription).toBe('<ul><li>Rompe el hielo</li></ul>');
   });
 });
+
+describe('Public event catalogue', () => {
+  const published = {
+    ...data,
+    _id: id,
+    organizerId: owner,
+    startsAt: new Date('2027-11-01T23:00:00Z'),
+    status: 'PUBLISHED' as const,
+    timeZone: 'America/Bogota',
+    publishedAt: new Date(),
+    imageKeys: ['a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp'],
+    __v: 1,
+  };
+  function publicSetup() {
+    const exec = vi.fn().mockResolvedValue([published]);
+    const find = vi.fn(() => ({
+      sort: vi.fn(() => ({
+        skip: vi.fn(() => ({ limit: vi.fn(() => ({ exec })) })),
+      })),
+    }));
+    const countDocuments = vi.fn(() => query(1));
+    const findOne = vi.fn(() => query(published));
+    const storage = {
+      readEventImage: vi.fn().mockResolvedValue({
+        bytes: Buffer.from('x'),
+        contentType: 'image/webp',
+      }),
+    };
+    const service = new EventsService(
+      {
+        find,
+        countDocuments,
+        findOne,
+        distinct: vi.fn(() => query(['11001'])),
+      } as never,
+      new LocationsService(),
+      storage as never,
+    );
+    return { service, find, storage };
+  }
+
+  it('lists only future published events in fixed pages without organizer-only fields', async () => {
+    const { service, find } = publicSetup();
+    const result = await service.listPublic({
+      page: 1,
+      q: 'Café',
+      cityCode: '11001',
+    });
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'PUBLISHED',
+        cityCode: '11001',
+        startsAt: { $gte: expect.any(Date) },
+        $or: expect.any(Array),
+      }),
+    );
+    expect(result).toMatchObject({ total: 1, page: 1, pageSize: 12 });
+    expect(result.events[0]).toEqual(
+      expect.objectContaining({
+        id: String(id),
+        confirmedCount: 0,
+        imageUrls: [
+          `/api/events/${String(id)}/images/a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp`,
+        ],
+      }),
+    );
+    expect(result.events[0]).not.toHaveProperty('organizerId');
+    expect(result.events[0]).not.toHaveProperty('description');
+  });
+
+  it('streams only an image belonging to a published event', async () => {
+    const { service, storage } = publicSetup();
+    await expect(
+      service.publicImage(
+        String(id),
+        'a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp',
+      ),
+    ).resolves.toMatchObject({ contentType: 'image/webp' });
+    expect(storage.readEventImage).toHaveBeenCalledWith(
+      String(id),
+      'a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp',
+    );
+  });
+
+  it('does not expose images when the event is not published or the key is unknown', async () => {
+    const storage = { readEventImage: vi.fn() };
+    const service = new EventsService(
+      { findOne: vi.fn(() => query(null)) } as never,
+      new LocationsService(),
+      storage as never,
+    );
+    await expect(
+      service.publicImage(
+        String(id),
+        'a0f8be88-a44c-47c2-9b1a-2e508d8f3b22.webp',
+      ),
+    ).rejects.toMatchObject({ response: { code: 'EVENT_IMAGE_NOT_FOUND' } });
+    expect(storage.readEventImage).not.toHaveBeenCalled();
+  });
+});

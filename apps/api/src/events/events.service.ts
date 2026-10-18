@@ -12,7 +12,7 @@ import {
   type UploadedImage,
 } from '../storage/r2-storage.service.js';
 import { MoonEvent } from './event.schema.js';
-import type { SaveEventDto } from './events.dto.js';
+import type { PublicEventListDto, SaveEventDto } from './events.dto.js';
 import { sanitizeEventRichText } from './event-rich-text.js';
 
 @Injectable()
@@ -39,6 +39,58 @@ export class EventsService {
       page,
       pageSize: 20,
     };
+  }
+  async listPublic(query: PublicEventListDto) {
+    const filter: Record<string, unknown> = {
+      status: 'PUBLISHED',
+      startsAt: { $gte: new Date() },
+    };
+    if (query.cityCode) filter.cityCode = query.cityCode;
+
+    const search = query.q?.trim();
+    if (search) {
+      const expression = new RegExp(escapeRegex(search), 'i');
+      const matchingCityCodes =
+        this.locations.matchingMunicipalityCodes(search);
+      filter.$or = [
+        { title: expression },
+        { venueName: expression },
+        { address: expression },
+        ...(matchingCityCodes.length
+          ? [{ cityCode: { $in: matchingCityCodes } }]
+          : []),
+      ];
+    }
+
+    const pageSize = 12;
+    const [events, total] = await Promise.all([
+      this.events
+        .find(filter)
+        .sort({ startsAt: 1, _id: 1 })
+        .skip((query.page - 1) * pageSize)
+        .limit(pageSize)
+        .exec(),
+      this.events.countDocuments(filter).exec(),
+    ]);
+    return {
+      events: events.map((event) => this.serializePublic(event)),
+      total,
+      page: query.page,
+      pageSize,
+    };
+  }
+  async publicCities() {
+    const cityCodes = await this.events
+      .distinct('cityCode', {
+        status: 'PUBLISHED',
+        startsAt: { $gte: new Date() },
+      })
+      .exec();
+    return cityCodes
+      .map((code) => this.locations.municipality(code))
+      .filter((city): city is NonNullable<typeof city> => Boolean(city))
+      .map(({ code, name }) => ({ code, name }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
   }
   async get(organizerId: Types.ObjectId, id: string) {
     const event = await this.events.findOne({ _id: id, organizerId }).exec();
@@ -158,6 +210,17 @@ export class EventsService {
       });
     return this.storage.readEventImage(id, imageKey);
   }
+  async publicImage(id: string, imageKey: string) {
+    const event = await this.events
+      .findOne({ _id: id, status: 'PUBLISHED', imageKeys: imageKey })
+      .exec();
+    if (!event)
+      throw new NotFoundException({
+        code: 'EVENT_IMAGE_NOT_FOUND',
+        message: 'No encontramos esta imagen.',
+      });
+    return this.storage.readEventImage(id, imageKey);
+  }
   serialize(event: MoonEvent & { _id: Types.ObjectId }) {
     return {
       id: String(event._id),
@@ -179,6 +242,23 @@ export class EventsService {
       ),
       status: event.status,
       publishedAt: event.publishedAt?.toISOString() ?? null,
+    };
+  }
+  private serializePublic(event: MoonEvent & { _id: Types.ObjectId }) {
+    return {
+      id: String(event._id),
+      title: event.title,
+      startsAt: event.startsAt.toISOString(),
+      timeZone: event.timeZone,
+      capacity: event.capacity,
+      confirmedCount: 0,
+      venueName: event.venueName,
+      address: event.address,
+      cityCode: event.cityCode,
+      cityName: this.locations.municipality(event.cityCode)?.name ?? '',
+      imageUrls: (event.imageKeys ?? []).map(
+        (imageKey) => `/api/events/${String(event._id)}/images/${imageKey}`,
+      ),
     };
   }
   private payload(dto: SaveEventDto) {
@@ -208,4 +288,8 @@ export class EventsService {
       message: 'Los eventos publicados ya no se pueden editar.',
     });
   }
+}
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

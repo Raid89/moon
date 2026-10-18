@@ -1,0 +1,176 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a routerLink="/eventos" class="brand" aria-label="Moon, inicio">
+      <img src="/moon_logo_letra_blanco.png" alt="Moon" width="40" height="40" />
+    </a>
+    <div class="header-actions">
+      <a routerLink="/login">Entrar</a
+      ><span class="header-avatar material-symbols-rounded" aria-hidden="true">account_circle</span>
+    </div>
+  </div>
+</header>
+
+<main class="home">
+  <section class="hero" aria-labelledby="home-title">
+    <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
+    <div class="hero__glow hero__glow--two" aria-hidden="true"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">
+        <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span> Planes reales,
+        gente nueva
+      </p>
+      <h1 id="home-title">Tu próximo <span>sí</span> empieza aquí.</h1>
+      <p class="hero__copy">
+        Encuentra encuentros Moon cerca de ti y haz que esta semana tenga una buena historia.
+      </p>
+    </div>
+  </section>
+
+  <section class="catalogue" aria-labelledby="catalogue-title">
+    <div class="catalogue__heading">
+      <div>
+        <p class="section-label">Explora</p>
+        <div class="title-row">
+          <h2 id="catalogue-title">Próximos planes</h2>
+          <span class="count" aria-live="polite">
+            @if (loading()) {
+              Cargando…
+            } @else {
+              {{ total() }} {{ total() === 1 ? 'plan' : 'planes' }}
+            }
+          </span>
+        </div>
+      </div>
+      <div class="filters" aria-label="Filtrar eventos">
+        <label class="search-control">
+          <span class="sr-only">Buscar planes</span
+          ><span class="control-icon material-symbols-rounded" aria-hidden="true">search</span>
+          <input [formControl]="search" placeholder="Ej. café, juegos, Medellín" type="search" />
+          @if (search.value) {
+            <button type="button" aria-label="Borrar búsqueda" (click)="clearSearch()">
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
+            </button>
+          }
+        </label>
+        <label class="city-control">
+          <span class="sr-only">Ciudad</span
+          ><span class="control-icon material-symbols-rounded" aria-hidden="true">location_on</span>
+          <select [formControl]="cityCode">
+            <option value="">Todas las ciudades</option>
+            @for (city of cities(); track city.code) {
+              <option [value]="city.code">{{ city.name }}</option>
+            }</select
+          ><span class="chevron material-symbols-rounded" aria-hidden="true"
+            >keyboard_arrow_down</span
+          >
+        </label>
+      </div>
+    </div>
+    @if (displayState() === 'loading') {
+      <div class="event-grid" aria-busy="true" aria-label="Cargando próximos planes">
+        @for (skeleton of [1, 2, 3, 4, 5, 6]; track skeleton) {
+          <article class="event-card skeleton" aria-hidden="true">
+            <div></div>
+            <span></span><span></span><span></span><span></span>
+          </article>
+        }
+      </div>
+    } @else if (displayState() === 'error') {
+      <section class="feedback feedback--error" role="alert">
+        <span class="feedback__icon material-symbols-rounded" aria-hidden="true">error</span>
+        <h3>No pudimos cargar los planes</h3>
+        <p>{{ error() || 'Parece que hubo una intermitencia con la conexión.' }}</p>
+        <button class="primary-action" (click)="retry()">Intentar de nuevo</button>
+      </section>
+    } @else if (displayState() === 'empty') {
+      <section class="feedback">
+        <span class="feedback__icon material-symbols-rounded" aria-hidden="true">dark_mode</span>
+        <h3>Aún no hay próximos planes</h3>
+        <p>Vuelve pronto: Moon está preparando nuevos encuentros.</p>
+      </section>
+    } @else if (displayState() === 'no-results') {
+      <section class="feedback">
+        <span class="feedback__icon material-symbols-rounded" aria-hidden="true">search_off</span>
+        <h3>No encontramos planes así</h3>
+        <p>Prueba buscando con otras palabras o explorando todas las ciudades de Colombia.</p>
+        <button class="secondary-action" (click)="resetFilters()">Ver todos los planes</button>
+      </section>
+    } @else {
+      <div class="event-grid">
+        @for (event of events(); track event.id) {
+          <article class="event-card">
+            <div class="cover">
+              @if (event.imageUrls[0]) {
+                <img
+                  [src]="event.imageUrls[0]"
+                  alt=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                />
+              } @else {
+                <div class="cover__fallback material-symbols-rounded" aria-hidden="true">
+                  auto_awesome
+                </div>
+              }
+              <span
+                ><b class="material-symbols-rounded" aria-hidden="true">location_on</b
+                >{{ event.cityName }}</span
+              >
+            </div>
+            <div class="event-card__body">
+              <p class="date">
+                {{ event.startsAt | date: 'EEEE, d MMMM · h:mm a' : '-0500' : 'es-CO' }}
+              </p>
+              <h3>{{ event.title }}</h3>
+              <p class="venue">{{ event.venueName }}, {{ event.address }}</p>
+              <div class="availability">
+                <span
+                  ><strong>{{ event.confirmedCount }}/{{ event.capacity }}</strong>
+                  confirmados</span
+                >
+                <div aria-hidden="true"><i [style.width.%]="0"></i></div>
+                <span class="event-arrow material-symbols-rounded" aria-hidden="true"
+                  >arrow_forward</span
+                >
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+      @if (hasMore) {
+        <div class="more">
+          <button class="more-button" [disabled]="loadingMore()" (click)="loadMore()">
+            {{ loadingMore() ? 'Cargando…' : 'Ver más planes' }}
+            @if (!loadingMore()) {
+              <span class="material-symbols-rounded" aria-hidden="true">arrow_downward</span>
+            }
+          </button>
+        </div>
+      }
+    }
+  </section>
+</main>
+
+<footer>
+  <div>
+    © 2026 Moon Colombia <span aria-hidden="true">•</span> Experiencias nocturnas comunitarias.
+  </div>
+  <div class="footer-cities">
+    <span class="material-symbols-rounded" aria-hidden="true">location_on</span> Bogotá · Medellín ·
+    Cali
+  </div>
+</footer>
+<nav class="mobile-nav" aria-label="Navegación principal">
+  <a class="is-active" routerLink="/eventos"
+    ><span class="material-symbols-rounded" aria-hidden="true">explore</span
+    ><span>Explorar</span></a
+  ><a routerLink="/eventos"
+    ><span class="material-symbols-rounded" aria-hidden="true">calendar_month</span
+    ><span>Encuentros</span></a
+  ><a routerLink="/eventos"
+    ><span class="material-symbols-rounded" aria-hidden="true">map</span><span>Mapa</span></a
+  ><a routerLink="/cuenta"
+    ><span class="material-symbols-rounded" aria-hidden="true">person</span
+    ><span>Mi Cuenta</span></a
+  >
+</nav>

@@ -1,6 +1,8 @@
 <main class="page event-workspace">
   <nav class="workspace-nav" aria-label="Organizador">
-    <a routerLink="/organizador/eventos">← Mis eventos</a>
+    <a routerLink="/organizador/eventos"
+      ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span> Mis eventos</a
+    >
     <span class="workspace-status">{{
       event()?.status === 'PUBLISHED' ? 'Publicado' : 'Borrador'
     }}</span>
@@ -46,7 +48,13 @@
             [attr.aria-current]="step() === item.id ? 'step' : null"
             (click)="goToStep(item.id)"
           >
-            <span class="step-number">{{ step() > item.id ? '✓' : item.id }}</span>
+            <span class="step-number">
+              @if (step() > item.id) {
+                <span class="material-symbols-rounded" aria-hidden="true">check</span>
+              } @else {
+                {{ item.id }}
+              }
+            </span>
             <span
               ><strong>{{ item.title }}</strong
               ><small>{{ item.description }}</small></span
@@ -146,7 +154,9 @@
                   </div>
                 </div>
                 <div class="date-scene" aria-hidden="true">
-                  <span>✦</span><span>☾</span><span>✦</span>
+                  <span class="material-symbols-rounded">auto_awesome</span
+                  ><span class="material-symbols-rounded">dark_mode</span
+                  ><span class="material-symbols-rounded">auto_awesome</span>
                 </div>
                 <div class="two-columns">
                   <moon-input
@@ -230,12 +240,13 @@
                       [href]="form.controls.mapLink.value"
                       target="_blank"
                       rel="noopener noreferrer"
-                      >Abrir en Google Maps ↗</a
+                      >Abrir en Google Maps
+                      <span class="material-symbols-rounded" aria-hidden="true">north_east</span></a
                     >
                   </div>
                 } @else {
                   <div class="map-placeholder">
-                    <span aria-hidden="true">⌖</span>
+                    <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
                     <p>
                       Cuando pegues un enlace de Google Maps, aquí tendrás una vista previa del
                       punto de encuentro.
@@ -268,7 +279,8 @@
                       alt="Vista previa de la imagen de portada elegida"
                     />
                   } @else {
-                    <span class="upload-icon" aria-hidden="true">↑</span
+                    <span class="upload-icon material-symbols-rounded" aria-hidden="true"
+                      >upload</span
                     ><strong>Elige una imagen de portada</strong
                     ><small>JPG, PNG o WebP · máximo 8 MB</small>
                   }
@@ -292,12 +304,18 @@
           <footer class="editor-actions">
             @if (step() > 1) {
               <moon-button variant="quiet" type="button" (click)="previousStep()"
-                >← Atrás</moon-button
+                ><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+                Atrás</moon-button
               >
             }
             <span class="action-spacer"></span>
             @if (step() < 4) {
-              <moon-button type="button" (click)="nextStep()">Continuar →</moon-button>
+              <moon-button type="button" (click)="nextStep()"
+                >Continuar
+                <span class="material-symbols-rounded" aria-hidden="true"
+                  >arrow_forward</span
+                ></moon-button
+              >
             } @else {
               <moon-button type="submit" [loading]="saving()" [disabled]="publishing()"
                 >Guardar borrador</moon-button

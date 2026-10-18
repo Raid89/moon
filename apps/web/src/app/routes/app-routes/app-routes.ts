@@ -6,6 +6,12 @@ import { Profile } from '../../features/auth/profile/profile';
 import { UiKit } from '../../features/ui-kit/ui-kit/ui-kit';
 
 export const routes: Routes = [
+  {
+    path: 'eventos',
+    title: 'Próximos planes | Moon',
+    loadComponent: () =>
+      import('../../features/events/events-home/events-home').then((m) => m.EventsHome),
+  },
   { path: 'organizador', pathMatch: 'full', redirectTo: 'organizador/eventos' },
   {
     path: 'organizador/eventos',
@@ -31,6 +37,6 @@ export const routes: Routes = [
   { path: 'completar-perfil', component: Profile },
   { path: 'cuenta', component: Account },
   { path: 'ui-kit', component: UiKit },
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: '**', redirectTo: 'login' },
+  { path: '', pathMatch: 'full', redirectTo: 'eventos' },
+  { path: '**', redirectTo: 'eventos' },
 ];

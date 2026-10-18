@@ -62,6 +62,22 @@ textarea {
   font: inherit;
 }
 
+.material-symbols-rounded {
+  display: inline-block;
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: normal;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 500,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
 .rich-text-field {
   display: grid;
   gap: var(--moon-space-2);

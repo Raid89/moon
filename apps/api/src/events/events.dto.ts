@@ -3,6 +3,7 @@ import {
   IsDateString,
   IsInt,
   IsMongoId,
+  IsOptional,
   IsString,
   IsUrl,
   Matches,
@@ -62,4 +63,11 @@ export class EventImageParamsDto extends EventParamsDto {
 }
 export class EventListDto {
   @Type(() => Number) @IsInt() @Min(1) @Max(100000) page = 1;
+}
+
+/** Query accepted by the public catalogue. Its response never exposes organizer-only fields. */
+export class PublicEventListDto {
+  @Type(() => Number) @IsInt() @Min(1) @Max(100000) page = 1;
+  @IsOptional() @Transform(trim) @IsString() @MaxLength(100) q?: string;
+  @IsOptional() @Matches(/^\d{5}$/) cityCode?: string;
 }
