@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+.field {
+  display: grid;
+  gap: var(--moon-space-2);
+}
+label {
+  color: var(--moon-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+textarea {
+  background: var(--moon-surface-raised);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-md);
+  box-sizing: border-box;
+  color: var(--moon-text);
+  font: inherit;
+  line-height: 1.5;
+  min-height: 112px;
+  outline: none;
+  padding: var(--moon-space-3);
+  resize: vertical;
+  transition:
+    border-color var(--moon-duration-fast),
+    box-shadow var(--moon-duration-fast);
+  width: 100%;
+}
+textarea::placeholder {
+  color: var(--moon-text-faint);
+}
+textarea:focus {
+  border-color: var(--moon-brand);
+  box-shadow: 0 0 0 3px var(--moon-focus);
+}
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.hint,
+.error {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.hint {
+  color: var(--moon-text-muted);
+}
+.error {
+  color: var(--moon-danger);
+}
+.has-error textarea {
+  border-color: var(--moon-danger);
+}
+@media (prefers-reduced-motion: reduce) {
+  textarea {
+    transition: none;
+  }
+}

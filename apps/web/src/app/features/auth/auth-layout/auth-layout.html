@@ -1,0 +1,51 @@
+<main class="auth-page">
+  <aside class="welcome" aria-label="Bienvenido a Moon">
+    <p class="wordmark">
+      <img src="/moon_logo_letra_blanco.png" alt="Moon" width="2172" height="724" />
+    </p>
+    <div class="welcome-copy">
+      <p class="eyebrow">MENOS SCROLL. MÁS ENCUENTROS.</p>
+      <h2>Los mejores planes<br />empiezan con<br /><em>un hola.</em></h2>
+      <p>Conoce gente nueva, comparte lo que te gusta y haz espacio para buenas historias.</p>
+    </div>
+    <div class="art" aria-hidden="true">
+      <div class="orbit"></div>
+      <span class="spark">✦</span>
+      <img src="/moon_logo.png" alt="" width="1280" height="1280" fetchpriority="high" />
+      <span class="sticker">Nos vemos allá ↗</span>
+    </div>
+    <p class="welcome-foot">Personas nuevas. Experiencias reales. <span>Colombia ↗</span></p>
+  </aside>
+  <section class="access" aria-labelledby="auth-title">
+    <p class="mobile-brand">
+      <img src="/moon_logo_letra_blanco.png" alt="Moon" width="2172" height="724" />
+    </p>
+    <div class="content">
+      <nav aria-label="Pasos de acceso">
+        <ol class="steps">
+          @for (label of steps; track label; let i = $index) {
+            <li
+              [class.current]="step() === i + 1"
+              [class.complete]="step() > i + 1"
+              [attr.aria-current]="step() === i + 1 ? 'step' : null"
+            >
+              <span class="step-number" aria-hidden="true">{{ step() > i + 1 ? '✓' : i + 1 }}</span>
+              {{ label }}
+            </li>
+          }
+        </ol>
+      </nav>
+      <div aria-live="polite" aria-atomic="true">
+        @for (currentStep of [step()]; track currentStep) {
+          <div class="heading" animate.enter="heading-enter">
+            <p class="eyebrow">{{ eyebrow() }}</p>
+            <h1 id="auth-title">{{ heading() }}</h1>
+            <p class="description">{{ description() }}</p>
+          </div>
+        }
+      </div>
+      <ng-content />
+    </div>
+    <p class="access-foot">Hecho para encontrarnos <span aria-hidden="true">✦</span></p>
+  </section>
+</main>

@@ -1,0 +1,95 @@
+:host {
+  display: inline-flex;
+}
+.button {
+  align-items: center;
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--moon-radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 750;
+  gap: 0.55rem;
+  justify-content: center;
+  line-height: 1.2;
+  min-height: 44px;
+  padding: 0 0.95rem;
+  transition:
+    background-color var(--moon-duration-fast),
+    border-color var(--moon-duration-fast),
+    color var(--moon-duration-fast),
+    transform var(--moon-duration-fast);
+}
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+.button:focus-visible {
+  outline: 3px solid var(--moon-focus);
+  outline-offset: 3px;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.primary {
+  background: var(--moon-brand);
+  box-shadow: 0 8px 24px var(--moon-brand-glow);
+  color: var(--moon-ink);
+}
+.primary:hover:not(:disabled) {
+  background: var(--moon-brand-strong);
+}
+.secondary {
+  background: var(--moon-surface-raised);
+  border-color: var(--moon-border);
+  color: var(--moon-text);
+}
+.secondary:hover:not(:disabled),
+.quiet:hover:not(:disabled) {
+  background: var(--moon-surface-hover);
+}
+.quiet {
+  background: transparent;
+  color: var(--moon-text);
+}
+.danger {
+  background: var(--moon-danger);
+  color: var(--moon-white);
+}
+.sm {
+  font-size: 0.875rem;
+  min-height: 36px;
+  padding: 0 0.75rem;
+}
+.md {
+  font-size: 0.9375rem;
+}
+.lg {
+  font-size: 1rem;
+  min-height: 50px;
+  padding: 0 1.2rem;
+}
+.spinner {
+  animation: spin 0.7s linear infinite;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  height: 0.9rem;
+  width: 0.9rem;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .spinner {
+    animation: none;
+    transition: none;
+  }
+}

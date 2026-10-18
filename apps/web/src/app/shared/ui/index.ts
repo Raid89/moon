@@ -4,6 +4,6 @@ export { Dialog } from './dialog/dialog';
 export { EmptyState } from './empty-state/empty-state';
 export { Input } from './input/input';
 export { Select, type SelectOption } from './select/select';
-export { ToastService, type ToastMessage, type ToastTone } from './toast';
+export { ToastService, type ToastMessage, type ToastTone } from './toast/toast';
 export { ToastViewport } from './toast-viewport/toast-viewport';
 export { Textarea } from './textarea/textarea';

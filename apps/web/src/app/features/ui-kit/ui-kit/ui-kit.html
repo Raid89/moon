@@ -1,0 +1,30 @@
+<main class="page">
+  <p><img src="/moon_logo.png" alt="Moon" width="48" height="48" /> UI</p>
+  <h1>Componentes reutilizables</h1>
+  <div class="grid">
+    <section>
+      <h2>Acciones</h2>
+      <div class="row">
+        <moon-button>Principal</moon-button
+        ><moon-button variant="secondary">Secundario</moon-button>
+      </div>
+      <div class="row">
+        <moon-badge tone="brand">Marca</moon-badge><moon-badge tone="success">Éxito</moon-badge>
+      </div>
+    </section>
+    <section>
+      <h2>Formulario</h2>
+      <moon-input label="Correo" type="email" [formControl]="email" /><moon-select
+        label="Plan"
+        [options]="options"
+        [formControl]="plan"
+      /><moon-textarea label="Mensaje" [formControl]="message" />
+    </section>
+    <moon-empty-state
+      title="Sin planes todavía"
+      description="Este es el estado vacío reutilizable."
+      icon="☾"
+      ><moon-button moonEmptyAction>Explorar</moon-button></moon-empty-state
+    >
+  </div>
+</main>

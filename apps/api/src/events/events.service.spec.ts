@@ -156,4 +156,20 @@ describe('Organizer events', () => {
       ).toBeGreaterThan(0);
     }
   });
+  it('stores the supported Quill HTML and removes unsafe markup', async () => {
+    const rich = plainToInstance(SaveEventDto, {
+      ...data,
+      description:
+        '<p><strong>Conecta</strong> <a href="javascript:alert(1)" onclick="alert(1)">aquí</a></p><script>alert(1)</script><img src="https://cdn.example.com/moon.jpg" onerror="alert(1)">',
+      activityDescription: '<ul><li>Rompe el hielo</li></ul>',
+      rules: '<p>Respeta a todas las personas.</p>',
+    });
+    expect(await validate(rich)).toHaveLength(0);
+    const { service } = setup();
+    const event = await service.create(owner, rich);
+    expect(event.description).toBe(
+      '<p><strong>Conecta</strong> <a target="_blank" rel="noopener noreferrer">aquí</a></p><img src="https://cdn.example.com/moon.jpg" />',
+    );
+    expect(event.activityDescription).toBe('<ul><li>Rompe el hielo</li></ul>');
+  });
 });

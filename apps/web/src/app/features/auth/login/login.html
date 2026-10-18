@@ -1,0 +1,89 @@
+<app-auth-layout
+  [step]="phase() === 'email' ? 1 : 2"
+  [eyebrow]="phase() === 'email' ? 'QUÉ BUENO TENERTE AQUÍ' : 'UN PASO MÁS CERCA'"
+  [heading]="phase() === 'email' ? 'Tu próximo plan empieza aquí.' : 'Revisa tu correo.'"
+  [description]="
+    phase() === 'email'
+      ? 'Entra o crea tu cuenta con tu correo. Te enviaremos un código, sin contraseñas que recordar.'
+      : 'Escribe el código de 6 dígitos que te enviamos para continuar.'
+  "
+>
+  @if (phase() === 'email') {
+    <form [formGroup]="emailForm" (ngSubmit)="sendCode()" novalidate [attr.aria-busy]="loading()">
+      <fieldset [disabled]="loading()">
+        <moon-input
+          controlId="auth-email"
+          name="email"
+          label="Correo electrónico"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="tu@correo.com"
+          hint="Usa un correo al que tengas acceso."
+          [formControl]="emailForm.controls.email"
+          [error]="emailError()"
+        />
+        <moon-button type="submit" size="lg" [loading]="loading()">
+          {{ loading() ? 'Enviando código…' : 'Continuar con mi correo' }}
+          <span aria-hidden="true">↗</span>
+        </moon-button>
+      </fieldset>
+      @if (emailError()) {
+        <p class="error" role="alert" animate.enter="feedback-enter">{{ emailError() }}</p>
+      }
+    </form>
+    <p class="support">
+      <strong>¿Es tu primera vez?</strong> Con el mismo código podrás crear tu cuenta. Solo te
+      pediremos tu nombre y ciudad.
+    </p>
+  } @else {
+    <div class="email-preview">
+      <strong>{{ pending()!.email }}</strong>
+      <button class="link-button" type="button" [disabled]="loading()" (click)="changeEmail()">
+        Cambiar correo
+      </button>
+    </div>
+    <p class="status" role="status">{{ deliveryMessage() }}</p>
+    <form [formGroup]="codeForm" (ngSubmit)="verifyCode()" novalidate [attr.aria-busy]="loading()">
+      <fieldset [disabled]="loading()">
+        <moon-input
+          controlId="auth-code"
+          name="code"
+          label="Código de verificación"
+          type="text"
+          inputmode="numeric"
+          [maxlength]="6"
+          autocomplete="one-time-code"
+          placeholder="000000"
+          [hint]="
+            expired()
+              ? 'El código venció. Solicita uno nuevo para continuar.'
+              : 'Puedes pegar el código completo. Vence en ' + expiryLabel() + '.'
+          "
+          [formControl]="codeForm.controls.code"
+          [error]="codeError()"
+        />
+        <moon-button type="submit" size="lg" [loading]="loading()" [disabled]="expired()">
+          {{ loading() ? 'Verificando…' : 'Verificar y continuar' }}
+          <span aria-hidden="true">→</span>
+        </moon-button>
+      </fieldset>
+      @if (codeError()) {
+        <p class="error" role="alert" animate.enter="feedback-enter">{{ codeError() }}</p>
+      }
+    </form>
+    <p class="support">¿No encuentras el correo? Revisa spam o correo no deseado.</p>
+    <button
+      class="link-button"
+      type="button"
+      [disabled]="loading() || !canResend()"
+      (click)="resend()"
+    >
+      {{ canResend() ? 'Enviar otro código' : 'Podrás reenviar en ' + resendSeconds() + ' s' }}
+    </button>
+    <p class="support">
+      {{ expired() ? 'Tu código venció.' : '' }} Por seguridad, solo funciona el código más
+      reciente.
+    </p>
+  }
+</app-auth-layout>

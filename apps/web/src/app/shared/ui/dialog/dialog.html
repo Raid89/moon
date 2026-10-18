@@ -1,0 +1,22 @@
+<dialog
+  #dialog
+  [attr.aria-labelledby]="titleId"
+  (cancel)="onCancel($event)"
+  (click)="onBackdropClick($event)"
+  (close)="onNativeClose()"
+>
+  <div class="content">
+    <div class="top">
+      <div>
+        <p class="eyebrow">{{ eyebrow() }}</p>
+        <h2 class="title" [id]="titleId">{{ title() }}</h2>
+      </div>
+      <button class="close" type="button" aria-label="Cerrar ventana" (click)="close()">×</button>
+    </div>
+    @if (description()) {
+      <p class="description">{{ description() }}</p>
+    }
+    <div class="body"><ng-content /></div>
+    <div class="actions"><ng-content select="[moonDialogActions]" /></div>
+  </div>
+</dialog>

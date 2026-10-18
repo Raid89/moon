@@ -1,0 +1,25 @@
+<div class="field" [class.has-error]="error()">
+  @if (label()) {
+    <label [for]="fieldId()">{{ label() }}</label>
+  }
+  <input
+    [attr.aria-describedby]="describedBy()"
+    [attr.aria-invalid]="!!error()"
+    [autocomplete]="autocomplete()"
+    [disabled]="isDisabled()"
+    [id]="fieldId()"
+    [inputMode]="inputmode()"
+    [maxLength]="maxlength()"
+    [name]="name()"
+    [placeholder]="placeholder()"
+    [type]="type()"
+    [value]="value()"
+    (blur)="markTouched()"
+    (input)="updateValue($event)"
+  />
+  @if (error()) {
+    <span class="error" [id]="errorId()">{{ error() }}</span>
+  } @else if (hint()) {
+    <span class="hint" [id]="hintId()">{{ hint() }}</span>
+  }
+</div>

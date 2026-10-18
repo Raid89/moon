@@ -40,6 +40,30 @@ docs/
 
 Antes de crear carpetas, Codex debe inspeccionar `pnpm-workspace.yaml`, `turbo.json`, `apps/`, dependencias, scripts y convenciones de código. No renombrar directorios existentes porque el documento muestre ejemplos.
 
+## Frontend: organización implementada
+
+El frontend Angular usa una estructura por responsabilidad y por feature:
+
+```text
+apps/web/src/app/
+├── core/
+│   ├── config/          # configuración de la aplicación
+│   ├── guards/          # protección de rutas
+│   ├── interceptors/    # infraestructura HTTP transversal
+│   ├── services/        # clientes y estado singleton de dominio
+│   └── utils/           # funciones transversales sin UI
+├── features/            # pantallas y flujos de producto por dominio
+├── routes/              # definición central de rutas
+├── shared/ui/           # primitivas visuales reutilizables sin lógica de dominio
+├── shell/               # componente raíz de la aplicación
+└── styles/              # estilos globales o transversales
+```
+
+Cada componente vive en su propia carpeta y mantiene, como máximo, un archivo TypeScript, un
+template HTML y una hoja SCSS con el mismo nombre base. Los estilos que se comparten dentro de una
+feature se ubican en su subcarpeta `shared/`; no se duplican entre pantallas. Las importaciones
+públicas de las primitivas UI continúan pasando por `shared/ui/index.ts`.
+
 ## Dependencias y contratos
 
 - Preferir contratos compartidos y validación runtime con Zod **si concuerda con las convenciones ya implementadas**; NestJS puede estar usando DTO/class-validator: no duplicar estrategias sin decisión.

@@ -1,0 +1,26 @@
+<div class="field" [class.has-error]="error()">
+  @if (label()) {
+    <label [for]="fieldId">{{ label() }}</label>
+  }
+  <select
+    [attr.aria-describedby]="describedBy()"
+    [attr.aria-invalid]="!!error()"
+    [disabled]="isDisabled()"
+    [id]="fieldId"
+    [value]="value()"
+    (blur)="markTouched()"
+    (change)="updateValue($event)"
+  >
+    @if (placeholder()) {
+      <option value="" disabled>{{ placeholder() }}</option>
+    }
+    @for (option of options(); track option.value) {
+      <option [disabled]="option.disabled" [value]="option.value">{{ option.label }}</option>
+    }
+  </select>
+  @if (error()) {
+    <span class="error" [id]="errorId">{{ error() }}</span>
+  } @else if (hint()) {
+    <span class="hint" [id]="hintId">{{ hint() }}</span>
+  }
+</div>

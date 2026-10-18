@@ -1,0 +1,78 @@
+<app-auth-layout
+  [step]="3"
+  eyebrow="HAGAMOS LAS PRESENTACIONES"
+  heading="Ahora sí, ¿cómo te llamas?"
+  description="Solo falta tu nombre y dónde vives. Hagamos que los próximos encuentros se sientan más cerca."
+>
+  @if (initializing()) {
+    <p class="status" role="status">Preparando tu perfil…</p>
+  }
+  @if (profileReady()) {
+    <p class="status">✓ Correo verificado. Este es el último paso.</p>
+  }
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    novalidate
+    [attr.aria-busy]="loading() || initializing()"
+  >
+    <fieldset [disabled]="loading() || initializing() || !profileReady()">
+      <moon-input
+        label="Tu nombre"
+        name="name"
+        autocomplete="name"
+        placeholder="Como te gusta que te llamen"
+        [formControl]="form.controls.name"
+        [error]="nameError()"
+      />
+      <div class="location-fields">
+        <moon-select
+          label="Departamento"
+          [placeholder]="departmentsLoading() ? 'Cargando departamentos…' : 'Elige tu departamento'"
+          [options]="departmentOptions()"
+          [formControl]="form.controls.departmentCode"
+          [error]="departmentError()"
+        />
+        <moon-select
+          label="Ciudad o municipio"
+          [placeholder]="citiesLoading() ? 'Cargando municipios…' : 'Elige tu municipio'"
+          [options]="municipalityOptions()"
+          [formControl]="form.controls.cityCode"
+          [error]="cityError()"
+          [hint]="
+            !form.controls.departmentCode.value
+              ? 'Primero selecciona tu departamento.'
+              : 'Tu lugar de residencia en Colombia.'
+          "
+        />
+      </div>
+      @if (locationError()) {
+        <p class="error" role="alert" animate.enter="feedback-enter">{{ locationError() }}</p>
+        <button class="link-button" type="button" (click)="retryLocations()">
+          Volver a cargar ubicaciones
+        </button>
+      }
+      <moon-button
+        type="submit"
+        size="lg"
+        [loading]="loading()"
+        [disabled]="
+          citiesLoading() || departmentsLoading() || !departments().length || !!locationError()
+        "
+      >
+        {{ loading() ? 'Guardando tu perfil…' : 'Guardar y continuar' }}
+        <span aria-hidden="true">↗</span>
+      </moon-button>
+    </fieldset>
+    @if (formError()) {
+      <p class="error" role="alert" animate.enter="feedback-enter">{{ formError() }}</p>
+    }
+  </form>
+  @if (!profileReady() && !initializing()) {
+    <button class="link-button" type="button" (click)="ngOnInit()">Volver a intentar</button>
+  }
+  <p class="support">
+    Un buen comienzo no necesita más datos. Tu correo, nombre y ciudad son suficientes para tu
+    perfil.
+  </p>
+</app-auth-layout>

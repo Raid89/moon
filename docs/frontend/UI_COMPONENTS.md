@@ -29,6 +29,10 @@ cupos y completar la inscripción; no debe convertirse en un dashboard genérico
 Los componentes son standalone y usan `ChangeDetectionStrategy.OnPush`. Sus estilos dependen de los
 tokens globales; conserva `src/styles.scss` en la aplicación consumidora.
 
+Cada primitiva ocupa su propia carpeta bajo `shared/ui/` y conserva sus archivos con el mismo
+nombre base (`button.ts`, `button.html`, `button.scss`, por ejemplo). El barrel
+`shared/ui/index.ts` es la única superficie pública para consumidores.
+
 ## Logos oficiales [CONFIRMADO]
 
 | Uso                                        | Archivo en `apps/web/public/` | `src` en la UI                |
@@ -109,7 +113,7 @@ Usa un botón cuando la acción ocurre en la página. Para navegar, usa un enlac
 - `danger`: acción destructiva; confirma con `moon-dialog` si no es reversible.
 - `loading` deshabilita el control y expone `aria-busy`; conserva un texto que describa la acción.
 
-## Formulario: `moon-input`, `moon-textarea` y `moon-select`
+## Formulario: `moon-input`, `moon-textarea`, `moon-select` y `ngx-quill`
 
 Los tres implementan `ControlValueAccessor`: úsalos con `ReactiveFormsModule`, `FormControl` y
 `formControlName`. No dupliques su estado con `[(ngModel)]` ni crees un input nativo paralelo.
@@ -152,6 +156,17 @@ necesitas un identificador estable; en caso contrario se genera automáticamente
 
 Inputs: `label`, `name`, `placeholder`, `hint`, `error`, `controlId` y `rows` (por defecto `4`).
 Úsalo para descripciones o reglas de varias líneas, no para respuestas cortas.
+
+### `ngx-quill` para contenido enriquecido
+
+Los campos de contenido de eventos (`description`, `activityDescription` y `rules`) usan
+`ngx-quill` con formato HTML, barra de negrita/cursiva/subrayado/tachado, encabezados, listas,
+citas, enlaces e imágenes. Importa `QuillModule` directamente en el componente standalone y
+incluye `quill/dist/quill.snow.css` en los estilos globales.
+
+Mantén `[sanitize]="true"`, los límites de contenido y la lista de formatos del editor. El botón
+de imagen abre un campo para pegar una URL pública `https://`; no permite seleccionar archivos ni
+insertar datos base64. La portada del evento mantiene su carga privada independiente.
 
 ### `moon-select`
 
@@ -301,7 +316,7 @@ Si cambia una API o se agrega una primitiva, actualiza en el mismo cambio:
 
 1. `apps/web/src/app/shared/ui/index.ts`.
 2. Esta guía, con propósito, contrato, ejemplo, accesibilidad y límites.
-3. El catálogo de composición de `apps/web/src/app/app.ts` si aporta un caso real de uso.
+3. El catálogo de composición de `apps/web/src/app/shell/app/app.ts` si aporta un caso real de uso.
 
 Verifica como mínimo:
 
@@ -312,14 +327,14 @@ pnpm --filter @moon/web build
 
 ## Composición de acceso
 
-`apps/web/src/app/auth/auth-layout/auth-layout.ts` compone la bienvenida y los pasos de acceso para
+`apps/web/src/app/features/auth/auth-layout/auth-layout.ts` compone la bienvenida y los pasos de acceso para
 login y perfil. Es local a la funcionalidad de autenticación; sus inputs son `step` (`1 | 2 | 3`),
 `eyebrow`, `heading` y `description`, todos requeridos. Proyecta el formulario con `ng-content`,
 identifica el paso con `aria-current="step"` y comparte el encabezado accesible de la sección.
 Los formularios siguen usando `Button`, `Input` y `Select` desde el barrel; sus APIs no cambian.
 `auth-form.scss` concentra los estilos de esta composición sin modificar el kit global.
 
-El movimiento de acceso está en `apps/web/src/app/auth/auth-motion.scss`, importado desde
+El movimiento de acceso está en `apps/web/src/app/styles/auth-motion/auth-motion.scss`, importado desde
 `styles.scss` y limitado al selector `app-auth-layout` para alcanzar también los formularios
 proyectados. Usa entradas escalonadas, transiciones del indicador de pasos y reacciones a hover
 solo en dispositivos con puntero preciso. El encabezado se recrea por paso con `animate.enter`;

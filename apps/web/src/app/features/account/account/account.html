@@ -1,0 +1,31 @@
+<main class="page">
+  <p class="brand"><img src="/moon_logo.png" alt="Moon" /></p>
+  <p class="eyebrow">Tu cuenta</p>
+  <h1>Qué gusto verte.</h1>
+  @if (user()) {
+    <section class="card" aria-label="Datos de tu perfil">
+      <div>
+        <p class="label">Nombre</p>
+        <p class="value">{{ user()!.name }}</p>
+      </div>
+      <div>
+        <p class="label">Correo</p>
+        <p class="value">{{ user()!.email }}</p>
+      </div>
+      <div>
+        <p class="label">Ciudad</p>
+        <p class="value">{{ user()!.cityName }}</p>
+      </div>
+    </section>
+    @if (user()!.role === 'ORGANIZER') {
+      <p>
+        <a routerLink="/organizador/eventos" style="color: var(--moon-brand-soft)"
+          >Gestionar mis eventos →</a
+        >
+      </p>
+    }
+    <moon-button variant="secondary" (click)="logout()" [loading]="loading()"
+      >Cerrar sesión</moon-button
+    >
+  }
+</main>

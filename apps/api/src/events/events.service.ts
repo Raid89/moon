@@ -13,6 +13,7 @@ import {
 } from '../storage/r2-storage.service.js';
 import { MoonEvent } from './event.schema.js';
 import type { SaveEventDto } from './events.dto.js';
+import { sanitizeEventRichText } from './event-rich-text.js';
 
 @Injectable()
 export class EventsService {
@@ -183,9 +184,9 @@ export class EventsService {
   private payload(dto: SaveEventDto) {
     return {
       title: dto.title,
-      description: dto.description,
-      activityDescription: dto.activityDescription,
-      rules: dto.rules,
+      description: sanitizeEventRichText(dto.description),
+      activityDescription: sanitizeEventRichText(dto.activityDescription),
+      rules: sanitizeEventRichText(dto.rules),
       startsAt: new Date(dto.startsAt),
       capacity: dto.capacity,
       venueName: dto.venueName,

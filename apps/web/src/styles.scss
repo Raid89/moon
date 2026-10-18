@@ -1,4 +1,5 @@
-@use './app/auth/auth-motion';
+@use './app/styles/auth-motion/auth-motion';
+@import 'quill/dist/quill.snow.css';
 
 :root {
   --moon-ink: #161616;
@@ -59,4 +60,106 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+.rich-text-field {
+  display: grid;
+  gap: var(--moon-space-2);
+  min-width: 0;
+}
+
+.rich-text-field > label {
+  color: var(--moon-text);
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.idea-editor-grid {
+  display: grid;
+  gap: var(--moon-space-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+}
+
+.moon-quill {
+  display: block;
+  min-width: 0;
+}
+
+.moon-quill .ql-toolbar.ql-snow,
+.moon-quill .ql-container.ql-snow {
+  border-color: var(--moon-border);
+}
+
+.moon-quill .ql-toolbar.ql-snow {
+  align-items: center;
+  background: var(--moon-surface-raised);
+  border-radius: var(--moon-radius-md) var(--moon-radius-md) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0;
+  padding: 0.55rem 0.6rem;
+}
+
+.moon-quill .ql-toolbar.ql-snow .ql-formats {
+  margin-right: 0.65rem;
+}
+
+.moon-quill .ql-container.ql-snow {
+  background: var(--moon-surface-raised);
+  border-radius: 0 0 var(--moon-radius-md) var(--moon-radius-md);
+  color: var(--moon-text);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.moon-quill .ql-editor {
+  line-height: 1.55;
+  min-height: 11rem;
+  overflow-wrap: anywhere;
+}
+
+.moon-quill .ql-editor.ql-blank::before {
+  color: var(--moon-text-faint);
+  font-style: normal;
+}
+
+.moon-quill .ql-stroke {
+  stroke: var(--moon-text-muted);
+}
+
+.moon-quill .ql-fill {
+  fill: var(--moon-text-muted);
+}
+
+.moon-quill .ql-picker {
+  color: var(--moon-text-muted);
+}
+
+.moon-quill .ql-snow.ql-toolbar button:hover .ql-stroke,
+.moon-quill .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.moon-quill .ql-snow .ql-picker-label:hover .ql-stroke,
+.moon-quill .ql-snow .ql-picker-label.ql-active .ql-stroke {
+  stroke: var(--moon-brand);
+}
+
+.moon-quill .ql-snow.ql-toolbar button:hover .ql-fill,
+.moon-quill .ql-snow.ql-toolbar button.ql-active .ql-fill,
+.moon-quill .ql-snow .ql-picker-label:hover .ql-fill,
+.moon-quill .ql-snow .ql-picker-label.ql-active .ql-fill {
+  fill: var(--moon-brand);
+}
+
+@media (max-width: 740px) {
+  .idea-editor-grid {
+    gap: var(--moon-space-4);
+  }
+
+  .moon-quill .ql-toolbar.ql-snow {
+    padding-inline: var(--moon-space-2);
+  }
+
+  .moon-quill .ql-toolbar.ql-snow .ql-formats {
+    margin-right: var(--moon-space-2);
+  }
 }

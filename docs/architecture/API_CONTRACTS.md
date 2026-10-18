@@ -91,6 +91,10 @@ POST/PATCH reciben todos los campos: `title` (3–160), `description` (10–1000
 validar. Las imágenes no se aceptan en este payload.
 `role`, `organizerId`, `status` y campos desconocidos son rechazados.
 
+`description`, `activityDescription` y `rules` reciben HTML de `ngx-quill`. La API conserva solo
+párrafos, encabezados, énfasis, listas, citas, enlaces e imágenes HTTPS; elimina scripts,
+atributos de evento y URLs inseguras antes de persistir.
+
 La respuesta añade `id`, `status`, `timeZone: America/Bogota`, `cityName` y `publishedAt` nullable.
 No incluye propietarios ni correos. `imageUrls` contiene rutas de lectura privadas de la API, nunca
 una URL ni una credencial de R2. Publicación exige inicio futuro. Errores relevantes:

@@ -1,0 +1,346 @@
+<main class="page event-workspace">
+  <nav class="workspace-nav" aria-label="Organizador">
+    <a routerLink="/organizador/eventos">← Mis eventos</a>
+    <span class="workspace-status">{{
+      event()?.status === 'PUBLISHED' ? 'Publicado' : 'Borrador'
+    }}</span>
+    <a routerLink="/cuenta">Mi cuenta</a>
+  </nav>
+  <section class="editor-hero" aria-labelledby="editor-title">
+    <p class="eyebrow">Equipo Moon · Configurador de eventos</p>
+    <h1 id="editor-title">
+      {{
+        event() ? 'Dale el último toque a tu plan.' : 'Armemos un plan que se sienta inolvidable.'
+      }}
+    </h1>
+    <p>
+      Cuatro momentos simples para preparar el encuentro. Todo queda en borrador hasta que decidas
+      publicarlo.
+    </p>
+  </section>
+  @if (loading()) {
+    <p class="loading-copy" role="status">Preparando tu espacio creativo…</p>
+  } @else if (loadFailed()) {
+    <div class="error" role="alert">
+      {{ error() }} <moon-button variant="secondary" (click)="load()">Reintentar</moon-button>
+    </div>
+  } @else {
+    @if (event()?.status === 'PUBLISHED') {
+      <div class="notice" role="status">
+        Este evento ya está publicado. Conservamos cada detalle para que puedas revisarlo, pero su
+        edición está bloqueada.
+      </div>
+    }
+    @if (error()) {
+      <div class="error" role="alert">{{ error() }}</div>
+    }
+    <div class="editor-layout">
+      <aside class="stepper" aria-label="Progreso de configuración">
+        <p class="stepper-label">Tu recorrido</p>
+        @for (item of steps; track item.id) {
+          <button
+            type="button"
+            class="step-button"
+            [class.current]="step() === item.id"
+            [class.done]="step() > item.id"
+            [attr.aria-current]="step() === item.id ? 'step' : null"
+            (click)="goToStep(item.id)"
+          >
+            <span class="step-number">{{ step() > item.id ? '✓' : item.id }}</span>
+            <span
+              ><strong>{{ item.title }}</strong
+              ><small>{{ item.description }}</small></span
+            >
+          </button>
+        }
+      </aside>
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <fieldset [disabled]="saving() || publishing() || event()?.status === 'PUBLISHED'">
+          @switch (step()) {
+            @case (1) {
+              <section class="step-panel" aria-labelledby="idea-title">
+                <div class="step-heading">
+                  <span>01</span>
+                  <div>
+                    <p>El concepto</p>
+                    <h2 id="idea-title">Cuéntanos qué va a pasar.</h2>
+                  </div>
+                </div>
+                <moon-input
+                  label="Nombre del evento"
+                  formControlName="title"
+                  [maxlength]="160"
+                  [error]="fieldError('title')"
+                  placeholder="Una noche para conectar"
+                />
+                <div class="rich-text-field">
+                  <label for="event-description">Descripción</label>
+                  <div>
+                    <quill-editor
+                      id="event-description"
+                      class="moon-quill"
+                      formControlName="description"
+                      [modules]="richTextModules"
+                      [sanitize]="true"
+                      [required]="true"
+                      [minLength]="10"
+                      [maxLength]="10000"
+                      placeholder="Haz que se sienta como una invitación, no como un aviso."
+                    ></quill-editor>
+                  </div>
+                  @if (fieldError('description')) {
+                    <p class="field-error" role="alert">{{ fieldError('description') }}</p>
+                  }
+                </div>
+                <div class="idea-editor-grid">
+                  <div class="rich-text-field">
+                    <label for="event-activities">Dinámica y actividades</label>
+                    <div>
+                      <quill-editor
+                        id="event-activities"
+                        class="moon-quill"
+                        formControlName="activityDescription"
+                        [modules]="richTextModules"
+                        [sanitize]="true"
+                        [required]="true"
+                        [minLength]="3"
+                        [maxLength]="10000"
+                        placeholder="Describe cómo se vivirá el plan…"
+                      ></quill-editor>
+                    </div>
+                    @if (fieldError('activityDescription')) {
+                      <p class="field-error" role="alert">
+                        {{ fieldError('activityDescription') }}
+                      </p>
+                    }
+                  </div>
+                  <div class="rich-text-field">
+                    <label for="event-rules">Reglas para asistir</label>
+                    <div>
+                      <quill-editor
+                        id="event-rules"
+                        class="moon-quill"
+                        formControlName="rules"
+                        [modules]="richTextModules"
+                        [sanitize]="true"
+                        [required]="true"
+                        [minLength]="3"
+                        [maxLength]="5000"
+                        placeholder="Comparte lo importante para que todos la pasen bien…"
+                      ></quill-editor>
+                    </div>
+                    @if (fieldError('rules')) {
+                      <p class="field-error" role="alert">{{ fieldError('rules') }}</p>
+                    }
+                  </div>
+                </div>
+              </section>
+            }
+            @case (2) {
+              <section class="step-panel" aria-labelledby="time-title">
+                <div class="step-heading">
+                  <span>02</span>
+                  <div>
+                    <p>El momento</p>
+                    <h2 id="time-title">Ponlo en el calendario.</h2>
+                  </div>
+                </div>
+                <div class="date-scene" aria-hidden="true">
+                  <span>✦</span><span>☾</span><span>✦</span>
+                </div>
+                <div class="two-columns">
+                  <moon-input
+                    label="Fecha y hora de inicio"
+                    type="datetime-local"
+                    formControlName="startsAt"
+                    [error]="fieldError('startsAt')"
+                    hint="Hora de Colombia (UTC-5)."
+                  /><moon-input
+                    label="Cupos disponibles"
+                    type="number"
+                    inputmode="numeric"
+                    formControlName="capacity"
+                    [error]="fieldError('capacity')"
+                    hint="El límite que verá la comunidad."
+                  />
+                </div>
+              </section>
+            }
+            @case (3) {
+              <section class="step-panel" aria-labelledby="place-title">
+                <div class="step-heading">
+                  <span>03</span>
+                  <div>
+                    <p>El lugar</p>
+                    <h2 id="place-title">Haz fácil llegar.</h2>
+                  </div>
+                </div>
+                <div class="two-columns">
+                  <moon-input
+                    label="Nombre del lugar"
+                    formControlName="venueName"
+                    [maxlength]="160"
+                    [error]="fieldError('venueName')"
+                    placeholder="Café, parque o punto de encuentro"
+                  /><moon-input
+                    label="Dirección"
+                    formControlName="address"
+                    [maxlength]="300"
+                    [error]="fieldError('address')"
+                  />
+                </div>
+                <div class="two-columns">
+                  <moon-select
+                    label="Departamento"
+                    [options]="departments()"
+                    [formControl]="department"
+                    (change)="loadCities()"
+                  /><moon-select
+                    label="Municipio"
+                    [options]="cities()"
+                    formControlName="cityCode"
+                    [error]="fieldError('cityCode')"
+                  />
+                </div>
+                @if (cityError()) {
+                  <div class="error" role="alert">
+                    {{ cityError() }}
+                    <moon-button variant="secondary" (click)="retryLocations()"
+                      >Reintentar</moon-button
+                    >
+                  </div>
+                }
+                <moon-input
+                  label="Enlace de Google Maps"
+                  type="url"
+                  formControlName="mapLink"
+                  [maxlength]="2048"
+                  [error]="fieldError('mapLink')"
+                  hint="En Google Maps: Compartir → Insertar un mapa → copia el enlace que aparece en src."
+                  placeholder="https://www.google.com/maps/embed?..."
+                />
+                @if (mapPreview()) {
+                  <div class="map-preview">
+                    <iframe
+                      [src]="mapPreview()"
+                      title="Vista previa de la ubicación en Google Maps"
+                      loading="lazy"
+                    ></iframe
+                    ><a
+                      [href]="form.controls.mapLink.value"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Abrir en Google Maps ↗</a
+                    >
+                  </div>
+                } @else {
+                  <div class="map-placeholder">
+                    <span aria-hidden="true">⌖</span>
+                    <p>
+                      Cuando pegues un enlace de Google Maps, aquí tendrás una vista previa del
+                      punto de encuentro.
+                    </p>
+                  </div>
+                }
+              </section>
+            }
+            @case (4) {
+              <section class="step-panel" aria-labelledby="image-title">
+                <div class="step-heading">
+                  <span>04</span>
+                  <div>
+                    <p>La primera impresión</p>
+                    <h2 id="image-title">Ponle una cara al plan.</h2>
+                  </div>
+                </div>
+                <div class="upload-note">
+                  <span aria-hidden="true">✦</span>
+                  <p>
+                    <strong>Modo ejemplo.</strong> Esta previsualización vive solo en tu navegador.
+                    Cuando nos compartas el bucket, conectaremos la carga real y guardaremos la
+                    imagen.
+                  </p>
+                </div>
+                <label
+                  class="image-dropzone"
+                  [class.has-image]="imagePreview()"
+                  [attr.aria-describedby]="imageError() ? 'image-error' : null"
+                  ><input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    (change)="selectImage($event)"
+                  />
+                  @if (imagePreview()) {
+                    <img
+                      [src]="imagePreview()"
+                      alt="Vista previa de la imagen de portada elegida"
+                    />
+                  } @else {
+                    <span class="upload-icon" aria-hidden="true">↑</span
+                    ><strong>Elige una imagen de portada</strong
+                    ><small>JPG, PNG o WebP · máximo 8 MB</small>
+                  }
+                </label>
+                @if (imagePreview()) {
+                  <div class="image-meta">
+                    <span>{{ imageName() }}</span
+                    ><moon-button variant="quiet" size="sm" (click)="clearImage()"
+                      >Quitar imagen</moon-button
+                    >
+                  </div>
+                }
+                @if (imageError()) {
+                  <p id="image-error" class="field-error" role="alert">{{ imageError() }}</p>
+                }
+              </section>
+            }
+          }
+        </fieldset>
+        @if (event()?.status !== 'PUBLISHED') {
+          <footer class="editor-actions">
+            @if (step() > 1) {
+              <moon-button variant="quiet" type="button" (click)="previousStep()"
+                >← Atrás</moon-button
+              >
+            }
+            <span class="action-spacer"></span>
+            @if (step() < 4) {
+              <moon-button type="button" (click)="nextStep()">Continuar →</moon-button>
+            } @else {
+              <moon-button type="submit" [loading]="saving()" [disabled]="publishing()"
+                >Guardar borrador</moon-button
+              >
+            }
+          </footer>
+          @if (event() && step() === 4) {
+            <div class="publish-row">
+              <p>¿Todo listo? Al publicar, los datos quedan bloqueados.</p>
+              <moon-button
+                variant="secondary"
+                [disabled]="form.dirty || saving() || publishing()"
+                (click)="publishOpen.set(true)"
+                >Publicar evento</moon-button
+              >
+            </div>
+          }
+        }
+      </form>
+    </div>
+  }
+  <moon-dialog
+    title="¿Publicar este evento?"
+    description="El evento será visible cuando conectemos el catálogo público y sus datos quedarán bloqueados."
+    [open]="publishOpen()"
+    (openChange)="publishOpen.set($event)"
+    ><p>Revisa el momento, el mapa y la información del encuentro antes de continuar.</p>
+    <moon-button
+      moonDialogActions
+      variant="secondary"
+      (click)="publishOpen.set(false)"
+      [disabled]="publishing()"
+      >Volver a revisar</moon-button
+    ><moon-button moonDialogActions (click)="publish()" [loading]="publishing()"
+      >Confirmar publicación</moon-button
+    ></moon-dialog
+  >
+</main>

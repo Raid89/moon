@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+.page {
+  margin: auto;
+  max-width: 52rem;
+  padding: var(--moon-space-6) var(--moon-space-4);
+}
+h1 {
+  font: var(--moon-font-display);
+  font-size: clamp(2rem, 7vw, 4rem);
+  margin: 0;
+}
+.grid {
+  display: grid;
+  gap: var(--moon-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-top: var(--moon-space-6);
+}
+section {
+  background: var(--moon-surface);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-lg);
+  display: grid;
+  gap: var(--moon-space-3);
+  padding: var(--moon-space-4);
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--moon-space-2);
+}

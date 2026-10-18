@@ -11,23 +11,30 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { sanitizeEventRichText } from './event-rich-text.js';
 
 const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
+const richText = ({ value }: { value: unknown }) =>
+  typeof value === 'string' ? sanitizeEventRichText(value) : value;
 
 export class SaveEventDto {
   @Transform(trim) @IsString() @MinLength(3) @MaxLength(160) title!: string;
-  @Transform(trim)
+  @Transform(richText)
   @IsString()
   @MinLength(10)
   @MaxLength(10000)
   description!: string;
-  @Transform(trim)
+  @Transform(richText)
   @IsString()
   @MinLength(3)
   @MaxLength(5000)
   activityDescription!: string;
-  @Transform(trim) @IsString() @MinLength(3) @MaxLength(5000) rules!: string;
+  @Transform(richText)
+  @IsString()
+  @MinLength(3)
+  @MaxLength(5000)
+  rules!: string;
   @IsDateString({ strict: true })
   @Matches(/(Z|[+-]\d{2}:\d{2})$/)
   startsAt!: string;

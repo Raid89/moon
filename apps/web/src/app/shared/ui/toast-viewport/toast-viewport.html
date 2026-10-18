@@ -1,0 +1,19 @@
+<section aria-label="Notificaciones" aria-live="polite">
+  @for (toast of toastService.messages(); track toast.id) {
+    <article
+      class="toast {{ toast.tone }}"
+      [attr.role]="toast.tone === 'error' ? 'alert' : 'status'"
+    >
+      <span class="symbol" aria-hidden="true">{{ symbol(toast.tone) }}</span
+      ><strong>{{ toast.title }}</strong>
+      <button
+        type="button"
+        [attr.aria-label]="'Cerrar: ' + toast.title"
+        (click)="toastService.dismiss(toast.id)"
+      >
+        ×
+      </button>
+      <span class="message">{{ toast.message }}</span>
+    </article>
+  }
+</section>
