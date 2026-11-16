@@ -9,7 +9,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import {
   EventCity,
@@ -22,7 +21,7 @@ type CataloguePreview = 'ready' | 'loading' | 'no-results' | 'empty' | 'error';
 @Component({
   selector: 'app-events-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, ReactiveFormsModule],
   styleUrl: './events-home.scss',
   templateUrl: './events-home.html',
 })

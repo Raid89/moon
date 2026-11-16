@@ -1,0 +1,64 @@
+<div class="site-shell" [class.site-shell--access]="isAccess()">
+  <header class="site-shell__header">
+    <div class="site-shell__bar">
+      <a routerLink="/eventos" class="site-shell__brand" aria-label="Moon, inicio"
+        ><img src="/moon_logo_letra_blanco.png" alt="Moon" width="2172" height="724"
+      /></a>
+      @if (isAccess()) {
+        <a class="site-shell__link" routerLink="/eventos"
+          >Ver planes
+          <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></a
+        >
+      } @else if (isSignedIn()) {
+        <nav class="site-shell__actions" aria-label="Cuenta">
+          <a routerLink="/eventos" routerLinkActive="is-active">Explorar</a>
+          @if (user()!.role === 'ORGANIZER') {
+            <a routerLink="/organizador/eventos" routerLinkActive="is-active">Organizar</a>
+          }
+          <a class="site-shell__profile" routerLink="/cuenta" routerLinkActive="is-active"
+            ><span class="material-symbols-rounded" aria-hidden="true">account_circle</span
+            ><span>{{ user()!.name || 'Mi cuenta' }}</span></a
+          >
+          <button type="button" (click)="logout()" [disabled]="sessionLoading()">
+            Cerrar sesión
+          </button>
+        </nav>
+      } @else {
+        <nav class="site-shell__actions" aria-label="Navegación principal">
+          <a routerLink="/eventos" routerLinkActive="is-active">Explorar</a
+          ><a class="site-shell__sign-in" routerLink="/login">Entrar</a>
+        </nav>
+      }
+    </div>
+  </header>
+  <main class="site-shell__content"><router-outlet /></main>
+  <footer class="site-shell__footer">
+    <div>
+      © {{ currentYear }} Moon Colombia <span aria-hidden="true">•</span> Experiencias reales para
+      encontrarnos.
+    </div>
+    <div class="site-shell__cities">
+      <span class="material-symbols-rounded" aria-hidden="true">location_on</span> Bogotá · Medellín
+      · Cali
+    </div>
+  </footer>
+  @if (!isAccess()) {
+    <nav class="site-shell__mobile-nav" aria-label="Navegación principal">
+      <a routerLink="/eventos" routerLinkActive="is-active"
+        ><span class="material-symbols-rounded" aria-hidden="true">explore</span
+        ><span>Explorar</span></a
+      >
+      @if (isSignedIn()) {
+        <a routerLink="/cuenta" routerLinkActive="is-active"
+          ><span class="material-symbols-rounded" aria-hidden="true">person</span
+          ><span>Mi cuenta</span></a
+        >
+      } @else {
+        <a routerLink="/login" routerLinkActive="is-active"
+          ><span class="material-symbols-rounded" aria-hidden="true">login</span
+          ><span>Entrar</span></a
+        >
+      }
+    </nav>
+  }
+</div>

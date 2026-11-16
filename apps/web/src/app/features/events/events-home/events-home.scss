@@ -10,66 +10,9 @@
   position: absolute;
   width: 1px;
 }
-.site-header {
-  background: rgb(14 14 18 / 80%);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgb(255 255 255 / 8%);
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 10;
-}
-.site-header__inner {
-  align-items: center;
-  display: flex;
-  height: 4rem;
-  justify-content: space-between;
-  margin: auto;
-  max-width: 80rem;
-  padding: 0 clamp(1rem, 4vw, 3rem);
-}
-.brand {
-  align-items: center;
-  color: var(--moon-text);
-  display: flex;
-  font: var(--moon-font-heading);
-  font-size: 1.125rem;
-  gap: 0.5rem;
-  text-decoration: none;
-}
-.brand img {
-  height: 2rem;
-  object-fit: contain;
-  width: auto;
-}
-.header-actions {
-  align-items: center;
-  display: flex;
-  gap: 1rem;
-}
-.header-actions a {
-  color: var(--moon-text-faint);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  padding: 0.5rem 0.75rem;
-  text-decoration: none;
-}
-.header-avatar {
-  align-items: center;
-  background: var(--moon-brand);
-  border-radius: 50%;
-  color: var(--moon-ink);
-  display: flex;
-  font-size: 1.25rem;
-  height: 2rem;
-  justify-content: center;
-  width: 2rem;
-}
 .home {
   background: #131317;
   min-height: 100vh;
-  padding-top: 4rem;
 }
 .hero {
   background: #0e0e12;
