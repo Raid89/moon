@@ -233,6 +233,7 @@
   flex-direction: column;
   min-width: 0;
   padding: 1rem;
+  text-decoration: none;
   transition:
     background var(--moon-duration-medium),
     transform var(--moon-duration-medium);
@@ -240,6 +241,10 @@
 .event-card:hover {
   background: #1a1b22;
   transform: translateY(-4px);
+}
+.event-card:focus-visible {
+  outline: 3px solid var(--moon-focus);
+  outline-offset: 3px;
 }
 .cover {
   aspect-ratio: 16 / 9;

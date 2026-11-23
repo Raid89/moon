@@ -14,7 +14,7 @@ Monorepo de `pnpm` y Turborepo con las aplicaciones iniciales:
 
 ```bash
 pnpm install
-pnpm dev       # levanta Angular (4200) y Nest (3000)
+pnpm dev       # levanta Angular (4321) y Nest (3000)
 pnpm build     # construye todas las aplicaciones mediante Turbo
 pnpm test      # ejecuta las pruebas disponibles
 pnpm lint      # ejecuta los linters disponibles

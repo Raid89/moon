@@ -1,0 +1,76 @@
+<main class="registrations-page">
+  <a class="back-link" routerLink="/organizador/eventos">
+    <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+    Mis eventos
+  </a>
+
+  @if (loading()) {
+    <p class="loading" role="status">Cargando inscritos…</p>
+  } @else if (error()) {
+    <section class="feedback" role="alert">
+      <span class="material-symbols-rounded" aria-hidden="true">error</span>
+      <h1>No pudimos abrir los inscritos</h1>
+      <p>{{ error() }}</p>
+      <moon-button variant="secondary" (click)="load()">Reintentar</moon-button>
+    </section>
+  } @else if (data(); as data) {
+    <header>
+      <p class="eyebrow">Equipo Moon · Lista privada</p>
+      <h1>{{ data.event.title }}</h1>
+      <p class="summary">
+        {{ data.event.confirmedCount }}/{{ data.event.capacity }} personas confirmadas ·
+        {{ data.event.startsAt | date: 'd MMMM, h:mm a' : '-0500' : 'es-CO' }}
+      </p>
+      <p class="privacy">
+        <span class="material-symbols-rounded" aria-hidden="true">lock</span>
+        Estos datos son solo para la coordinación del encuentro Moon.
+      </p>
+    </header>
+
+    @if (!data.registrations.length) {
+      <moon-empty-state
+        title="Aún no hay personas inscritas"
+        description="Cuando alguien reserve su lugar, aparecerá aquí para que puedas preparar el encuentro."
+        icon="group"
+      />
+    } @else {
+      <section class="registrations" aria-labelledby="registrations-title">
+        <div class="registrations__heading">
+          <h2 id="registrations-title">Personas inscritas</h2>
+          <span>{{ data.registrations.length }}</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">
+              Personas inscritas a
+              {{
+                data.event.title
+              }}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Persona</th>
+                <th scope="col">Ciudad</th>
+                <th scope="col">Se inscribió</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (registration of data.registrations; track registration.id) {
+                <tr>
+                  <td>
+                    <strong>{{ registration.name }}</strong>
+                    <a [href]="'mailto:' + registration.email">{{ registration.email }}</a>
+                  </td>
+                  <td>{{ registration.cityName || 'Sin ciudad' }}</td>
+                  <td>
+                    {{ registration.registeredAt | date: 'd MMM, h:mm a' : '-0500' : 'es-CO' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+</main>

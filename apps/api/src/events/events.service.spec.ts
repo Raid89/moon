@@ -243,6 +243,36 @@ describe('Public event catalogue', () => {
     expect(result.events[0]).not.toHaveProperty('description');
   });
 
+  it('returns a public detail only for a future published event', async () => {
+    const { service, find } = publicSetup();
+    await expect(service.getPublic(String(id))).resolves.toMatchObject({
+      id: String(id),
+      description: data.description,
+      activityDescription: data.activityDescription,
+      rules: data.rules,
+      mapLink: data.mapLink,
+      confirmedCount: 0,
+    });
+    expect(find).not.toHaveBeenCalled();
+
+    const findOne = vi.fn(() => query(null));
+    const unavailable = new EventsService(
+      { findOne } as never,
+      new LocationsService(),
+      {} as never,
+    );
+    await expect(unavailable.getPublic(String(id))).rejects.toMatchObject({
+      response: { code: 'EVENT_NOT_FOUND' },
+    });
+    expect(findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        _id: String(id),
+        status: 'PUBLISHED',
+        startsAt: { $gte: expect.any(Date) },
+      }),
+    );
+  });
+
   it('streams only an image belonging to a published event', async () => {
     const { service, storage } = publicSetup();
     await expect(

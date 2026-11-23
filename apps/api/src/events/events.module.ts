@@ -2,9 +2,15 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module.js';
 import { OrganizerGuard } from '../auth/organizer.guard.js';
+import { ProfileGuard } from '../auth/profile.guard.js';
 import { LocationsModule } from '../locations/locations.module.js';
 import { StorageModule } from '../storage/storage.module.js';
 import { MoonEvent, MoonEventSchema } from './event.schema.js';
+import {
+  EventRegistration,
+  EventRegistrationSchema,
+} from './registration.schema.js';
+import { RegistrationsService } from './registrations.service.js';
 import {
   EventsController,
   PublicEventsController,
@@ -18,9 +24,15 @@ import { EventsService } from './events.service.js';
     StorageModule,
     MongooseModule.forFeature([
       { name: MoonEvent.name, schema: MoonEventSchema },
+      { name: EventRegistration.name, schema: EventRegistrationSchema },
     ]),
   ],
   controllers: [EventsController, PublicEventsController],
-  providers: [EventsService, OrganizerGuard],
+  providers: [
+    EventsService,
+    RegistrationsService,
+    OrganizerGuard,
+    ProfileGuard,
+  ],
 })
 export class EventsModule {}

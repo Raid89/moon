@@ -50,11 +50,19 @@
                 {{ event.startsAt | date: 'dd/MM/yyyy · HH:mm' : '-0500' }}
                 <span class="muted">(Colombia)</span>
               </p>
-              <p class="muted">{{ event.cityName }} · {{ event.capacity }} cupos</p>
-              <a [routerLink]="['/organizador/eventos', event.id]"
-                >{{ event.status === 'DRAFT' ? 'Configurar evento' : 'Ver detalles' }}
+              <p class="muted">
+                {{ event.cityName }} · {{ event.confirmedCount }}/{{ event.capacity }} confirmados
+              </p>
+              <a [title]="event.status === 'DRAFT' ? 'Configurar evento' : 'Ver detalles' " [routerLink]="['/organizador/eventos', event.id]"
+                >
                 <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span></a
               >
+              @if (event.status === 'PUBLISHED') {
+                <a title="Ver Inscritos" [routerLink]="['/organizador/eventos', event.id, 'inscritos']"
+                  >
+                  <span class="material-symbols-rounded" aria-hidden="true">group</span></a
+                >
+              }
             </div>
           </article>
         }

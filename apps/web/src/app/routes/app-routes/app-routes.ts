@@ -24,6 +24,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../../features/events/events-home/events-home').then((m) => m.EventsHome),
       },
+      {
+        path: 'eventos/:id',
+        title: 'Detalle del evento | Moon',
+        loadComponent: () =>
+          import('../../features/events/event-detail/event-detail').then((m) => m.EventDetail),
+      },
       { path: 'organizador', pathMatch: 'full', redirectTo: 'organizador/eventos' },
       {
         path: 'organizador/eventos',
@@ -37,6 +43,15 @@ export const routes: Routes = [
         canActivate: [organizerGuard],
         loadComponent: () =>
           import('../../features/organizer/event-editor/event-editor').then((m) => m.EventEditor),
+      },
+      {
+        path: 'organizador/eventos/:id/inscritos',
+        title: 'Inscritos al evento | Moon',
+        canActivate: [organizerGuard],
+        loadComponent: () =>
+          import('../../features/organizer/event-registrations/event-registrations').then(
+            (m) => m.EventRegistrations,
+          ),
       },
       {
         path: 'organizador/eventos/:id',

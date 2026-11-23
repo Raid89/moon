@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import {
   EventCity,
@@ -21,7 +22,7 @@ type CataloguePreview = 'ready' | 'loading' | 'no-results' | 'empty' | 'error';
 @Component({
   selector: 'app-events-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink],
   styleUrl: './events-home.scss',
   templateUrl: './events-home.html',
 })
@@ -123,6 +124,10 @@ export class EventsHome implements OnInit, OnDestroy {
   retry() {
     this.preview.set('ready');
     void this.load();
+  }
+
+  capacityPercent(event: PublicEvent): number {
+    return Math.min(100, Math.round((event.confirmedCount / event.capacity) * 100));
   }
 
   private reset() {

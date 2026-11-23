@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AuthService,
   Department,
@@ -32,6 +32,7 @@ import { AuthLayout } from '../auth-layout/auth-layout';
 export class Profile implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
@@ -83,13 +84,13 @@ export class Profile implements OnInit {
     try {
       const user = await this.auth.loadUser();
       if (!user) {
-        await this.router.navigateByUrl('/login');
+        await this.router.navigate(['/login'], {
+          queryParams: this.returnUrl() ? { returnUrl: this.returnUrl() } : {},
+        });
         return;
       }
       if (user.profileComplete) {
-        await this.router.navigateByUrl(
-          this.auth.user()?.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta',
-        );
+        await this.router.navigateByUrl(this.destination());
         return;
       }
       this.form.controls.name.setValue(user.name ?? '');
@@ -189,13 +190,23 @@ export class Profile implements OnInit {
         this.form.controls.name.value,
         this.form.controls.cityCode.value,
       );
-      await this.router.navigateByUrl(
-        this.auth.user()?.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta',
-      );
+      await this.router.navigateByUrl(this.destination());
     } catch (e) {
       this.formError.set(e instanceof ApiError ? e.message : 'No pudimos guardar tu perfil.');
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private destination(): string {
+    return (
+      this.returnUrl() ??
+      (this.auth.user()?.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta')
+    );
+  }
+
+  private returnUrl(): string | null {
+    const value = this.route.snapshot.queryParamMap.get('returnUrl');
+    return value?.startsWith('/') && !value.startsWith('//') ? value : null;
   }
 }

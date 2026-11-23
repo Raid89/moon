@@ -1,0 +1,420 @@
+:host {
+  display: block;
+}
+
+.event-detail {
+  background:
+    radial-gradient(circle at 100% 0, rgb(245 158 11 / 12%), transparent 30rem), var(--moon-night);
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 4vw, 3rem) 5rem;
+}
+
+.event-detail__container {
+  margin: auto;
+  max-width: 74rem;
+}
+
+.back-link,
+.location-card > a,
+.return-button {
+  align-items: center;
+  color: var(--moon-brand-soft);
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 750;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.back-link {
+  color: var(--moon-text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.back-link:hover,
+.location-card > a:hover {
+  color: var(--moon-brand-soft);
+}
+
+.back-link:focus-visible,
+.location-card > a:focus-visible,
+.return-button:focus-visible {
+  border-radius: var(--moon-radius-pill);
+  outline: 3px solid var(--moon-focus);
+  outline-offset: 4px;
+}
+
+.event-heading {
+  border-bottom: 1px solid var(--moon-border);
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.event-heading__eyebrow,
+.location-card__heading > div > p,
+.attendance-card__top p {
+  align-items: center;
+  color: var(--moon-brand);
+  display: flex;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  gap: 0.45rem;
+  letter-spacing: 0.11em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.event-heading h1 {
+  color: var(--moon-text);
+  font-family: 'Plus Jakarta Sans', var(--moon-font-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  letter-spacing: -0.045em;
+  line-height: 1.13;
+  margin: 0.65rem 0 1.25rem;
+  max-width: 19ch;
+}
+
+.event-heading__meta {
+  color: var(--moon-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap: 0.7rem 1.5rem;
+}
+
+.event-heading__meta span {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.event-heading__meta i {
+  color: var(--moon-brand);
+  font-size: 1.1rem;
+  font-style: normal;
+}
+
+.detail-layout {
+  align-items: start;
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.85fr);
+}
+
+.detail-story,
+.detail-aside {
+  min-width: 0;
+}
+
+.detail-story {
+  display: grid;
+  gap: 3rem;
+}
+
+.cover {
+  align-items: center;
+  aspect-ratio: 16 / 10;
+  background:
+    radial-gradient(circle at 70% 20%, rgb(245 158 11 / 40%), transparent 25%),
+    var(--moon-surface-raised);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-lg);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.cover > img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.cover > .material-symbols-rounded {
+  color: var(--moon-brand);
+  font-size: 4rem;
+}
+
+.cover::after {
+  background: linear-gradient(0deg, rgb(0 0 0 / 58%), transparent 42%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.cover__badge {
+  align-items: center;
+  backdrop-filter: blur(12px);
+  background: rgb(11 11 15 / 80%);
+  border: 1px solid var(--moon-border-strong);
+  border-radius: var(--moon-radius-pill);
+  bottom: 1rem;
+  color: var(--moon-text);
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.4rem;
+  left: 1rem;
+  padding: 0.55rem 0.75rem;
+  position: absolute;
+  z-index: 1;
+}
+
+.cover__badge i {
+  color: var(--moon-brand);
+  font-size: 1rem;
+  font-style: normal;
+}
+
+.content-section h2,
+.location-card h2 {
+  color: var(--moon-text);
+  font-family: 'Plus Jakarta Sans', var(--moon-font-heading);
+  font-size: 1.2rem;
+  letter-spacing: -0.025em;
+  margin: 0 0 1rem;
+}
+
+.rich-content {
+  color: var(--moon-text-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.rich-content--activity,
+.rich-content--rules {
+  background: var(--moon-surface);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-md);
+  padding: 1.25rem;
+}
+
+.detail-aside {
+  display: grid;
+  gap: 1.25rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.attendance-card,
+.location-card {
+  background: var(--moon-surface);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-lg);
+  padding: 1.5rem;
+}
+
+.attendance-card__top {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.attendance-card__top strong {
+  color: var(--moon-text);
+  font-family: var(--moon-font-display);
+  font-size: 2rem;
+  letter-spacing: -0.05em;
+}
+
+.attendance-card__top div > span {
+  color: var(--moon-text-faint);
+  font-size: 0.75rem;
+  margin-left: 0.35rem;
+}
+
+.attendance-card__status {
+  align-items: center;
+  color: var(--moon-text-faint);
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.35rem;
+}
+
+.attendance-card__status i {
+  background: var(--moon-warning);
+  border-radius: 50%;
+  height: 0.4rem;
+  width: 0.4rem;
+}
+
+.capacity-bar {
+  background: rgb(255 255 255 / 8%);
+  border-radius: var(--moon-radius-pill);
+  height: 0.4rem;
+  margin: 1.25rem 0 0.75rem;
+  overflow: hidden;
+}
+
+.capacity-bar i {
+  background: linear-gradient(90deg, var(--moon-brand), var(--moon-brand-strong));
+  display: block;
+  height: 100%;
+}
+
+.attendance-card__message {
+  color: var(--moon-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.attendance-card moon-button {
+  width: 100%;
+}
+
+.attendance-card moon-button :is(button) {
+  width: 100%;
+}
+
+.location-card__heading {
+  align-items: start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.location-card__heading > span {
+  color: var(--moon-brand-strong);
+}
+
+.location-card h2 {
+  font-size: 1rem;
+  margin-top: 0.35rem;
+}
+
+.location-card > p {
+  color: var(--moon-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin: 0.2rem 0;
+}
+
+.location-card > p + p {
+  color: var(--moon-text-faint);
+}
+
+.map-preview {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgb(245 158 11 / 18%) 25%, transparent 25%) 0 0 / 22px 22px,
+    linear-gradient(315deg, rgb(255 255 255 / 5%) 25%, transparent 25%) 0 0 / 22px 22px,
+    var(--moon-surface-raised);
+  border: 1px solid var(--moon-border);
+  border-radius: 0.75rem;
+  display: flex;
+  height: 8rem;
+  justify-content: center;
+  margin: 1.25rem 0 1rem;
+}
+
+.map-preview span {
+  align-items: center;
+  background: var(--moon-brand);
+  border-radius: 50%;
+  color: var(--moon-ink);
+  display: flex;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
+.detail-feedback {
+  align-items: center;
+  background: var(--moon-surface);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-lg);
+  display: grid;
+  justify-items: center;
+  margin: 5rem auto;
+  max-width: 32rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.detail-feedback > span {
+  color: var(--moon-brand);
+  font-size: 2rem;
+}
+
+.detail-feedback h1 {
+  font-family: var(--moon-font-heading);
+  font-size: 1.4rem;
+  margin: 1rem 0 0.4rem;
+}
+
+.detail-feedback p {
+  color: var(--moon-text-muted);
+  margin: 0.5rem 0 1.25rem;
+}
+
+.return-button {
+  background: var(--moon-brand);
+  border-radius: var(--moon-radius-pill);
+  color: var(--moon-ink);
+  padding: 0.75rem 1.1rem;
+}
+
+.sr-only {
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (max-width: 860px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-aside {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .event-detail {
+    padding-bottom: 2rem;
+    padding-top: 1.5rem;
+  }
+
+  .back-link {
+    margin-bottom: 2rem;
+  }
+
+  .event-heading {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .event-heading__meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .detail-story {
+    gap: 2.5rem;
+  }
+
+  .cover {
+    aspect-ratio: 1.25;
+  }
+
+  .cover__badge {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto;
+  }
+}

@@ -18,11 +18,25 @@ export interface EventInput {
 }
 export interface MoonEvent extends EventInput {
   id: string;
+  confirmedCount: number;
   status: 'DRAFT' | 'PUBLISHED';
   timeZone: string;
   cityName: string;
   publishedAt: string | null;
   imageUrls: string[];
+}
+
+export interface OrganizerRegistration {
+  id: string;
+  name: string;
+  email: string;
+  cityName: string;
+  registeredAt: string;
+}
+
+export interface OrganizerRegistrations {
+  event: Pick<MoonEvent, 'id' | 'title' | 'startsAt' | 'capacity' | 'confirmedCount'>;
+  registrations: OrganizerRegistration[];
 }
 @Injectable({ providedIn: 'root' })
 export class EventsService {
@@ -69,6 +83,11 @@ export class EventsService {
       this.http.delete<{ event: MoonEvent }>(apiUrl(`organizer/events/${id}/cover`)),
     );
     return { event: this.withAbsoluteImageUrls(result.event) };
+  }
+  async registrations(id: string): Promise<OrganizerRegistrations> {
+    return this.call(
+      this.http.get<OrganizerRegistrations>(apiUrl(`organizer/events/${id}/registrations`)),
+    );
   }
   private withAbsoluteImageUrls(event: MoonEvent): MoonEvent {
     return { ...event, imageUrls: event.imageUrls.map((url) => apiUrl(url)) };

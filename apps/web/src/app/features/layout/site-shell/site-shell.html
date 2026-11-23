@@ -19,9 +19,6 @@
             ><span class="material-symbols-rounded" aria-hidden="true">account_circle</span
             ><span>{{ user()!.name || 'Mi cuenta' }}</span></a
           >
-          <button type="button" (click)="logout()" [disabled]="sessionLoading()">
-            Cerrar sesión
-          </button>
         </nav>
       } @else {
         <nav class="site-shell__actions" aria-label="Navegación principal">

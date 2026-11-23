@@ -8,15 +8,17 @@
 4. Si no tiene sesión: introduce email → recibe OTP → lo verifica; si es nuevo, introduce nombre y ciudad colombiana.
 5. API valida estado del evento, cupos y duplicidad **en el momento de confirmar**.
 6. Se muestra inscripción confirmada o un error accionable (sin cupos, evento cancelado, ya inscrito, etc.).
-7. En `Mis eventos` visualiza inscripción y, si está habilitado, la cancela.
+7. El organizador propietario consulta la lista privada de personas inscritas para coordinar el evento.
 
 ### Catálogo público — implementado 2026-10-18
 
 `/eventos` es la entrada pública de Moon y adapta la misma vista a móvil y escritorio. Muestra solo
 próximos eventos publicados, permite buscar por texto, filtrar por ciudad y cargar más resultados.
 Comunica carga, error recuperable, catálogo vacío y ausencia de resultados. Hasta implementar
-inscripciones, cada tarjeta comunica `0/capacidad` sin inferir ni mostrar asistentes; el detalle y
-la inscripción continúan fuera de este alcance.
+inscripciones, cada tarjeta comunica `confirmados/capacidad` sin inferir identidades. Cada tarjeta
+abre `/eventos/:id`, una vista pública que muestra portada, contenido, ubicación y capacidad. Una
+persona con sesión y perfil completo puede pulsar `Quiero ir`; si falta acceso o perfil, vuelve al
+mismo evento después de completarlo. El organizador propietario abre la lista privada desde su panel.
 
 ## B. Acceso por email OTP [confirmado a nivel de mecanismo]
 

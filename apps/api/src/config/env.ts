@@ -3,7 +3,7 @@ import { registerAs } from '@nestjs/config';
 export const appConfig = registerAs('app', () => ({
   isProduction: process.env.NODE_ENV === 'production',
   port: Number(process.env.PORT ?? 3000),
-  webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:4200',
+  webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:4321',
   organizerEmails: (process.env.ORGANIZER_EMAILS ?? '')
     .split(',')
     .map((email) => email.trim().toLowerCase())

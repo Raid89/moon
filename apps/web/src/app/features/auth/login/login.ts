@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 import { AuthLayout } from '../auth-layout/auth-layout';
@@ -34,6 +34,7 @@ interface PendingOtp {
 export class Login implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
@@ -154,10 +155,8 @@ export class Login implements OnInit {
       sessionStorage.removeItem('moon.pending-otp');
       await this.router.navigateByUrl(
         user.profileComplete
-          ? user.role === 'ORGANIZER'
-            ? '/organizador/eventos'
-            : '/cuenta'
-          : '/completar-perfil',
+          ? (this.returnUrl() ?? (user.role === 'ORGANIZER' ? '/organizador/eventos' : '/cuenta'))
+          : this.profileUrl(),
       );
     } catch (e) {
       this.codeError.set(e instanceof ApiError ? e.message : 'No pudimos verificar el código.');
@@ -180,5 +179,17 @@ export class Login implements OnInit {
     this.codeError.set('');
     this.codeForm.reset();
     this.focusField('auth-email');
+  }
+
+  private profileUrl(): string {
+    const returnUrl = this.returnUrl();
+    return returnUrl
+      ? `/completar-perfil?returnUrl=${encodeURIComponent(returnUrl)}`
+      : '/completar-perfil';
+  }
+
+  private returnUrl(): string | null {
+    const value = this.route.snapshot.queryParamMap.get('returnUrl');
+    return value?.startsWith('/') && !value.startsWith('//') ? value : null;
   }
 }

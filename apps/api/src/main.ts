@@ -8,7 +8,7 @@ import { requestId } from './common/request-id.middleware.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configuredOrigins = (process.env.WEB_ORIGIN ?? 'http://localhost:4200')
+  const configuredOrigins = (process.env.WEB_ORIGIN ?? 'http://localhost:4321')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -17,8 +17,8 @@ async function bootstrap() {
       ? configuredOrigins
       : [
           ...configuredOrigins,
-          'http://localhost:4200',
-          'http://127.0.0.1:4200',
+          'http://localhost:4321',
+          'http://127.0.0.1:4321',
         ],
   );
   app.setGlobalPrefix('api');

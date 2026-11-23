@@ -46,17 +46,6 @@ export class SiteShell implements OnInit, OnDestroy {
     this.navigation.unsubscribe();
   }
 
-  async logout(): Promise<void> {
-    if (this.sessionLoading()) return;
-    this.sessionLoading.set(true);
-    try {
-      await this.auth.logout();
-      await this.router.navigateByUrl('/eventos');
-    } finally {
-      this.sessionLoading.set(false);
-    }
-  }
-
   private async restoreSession(): Promise<void> {
     try {
       await this.auth.loadUser();

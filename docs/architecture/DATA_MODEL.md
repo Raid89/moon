@@ -78,5 +78,13 @@ Colección `events` con Mongoose: `organizerId` ObjectId, campos de contenido, `
 `imageKeys` contiene nombres opacos de objetos de R2, sin URL pública ni credenciales. La API
 deriva rutas privadas de lectura para el organizador. Estados reales: `DRAFT | PUBLISHED`,
 `publishedAt`, timestamps y `__v`. Índice declarado `{ organizerId: 1, _id: -1 }` para listado propio.
-El índice físico no se ha verificado en esta entrega. No se ha implementado `registrations`.
-La publicación comprueba estado/versión; edición modifica solo `DRAFT` y aumenta versión.
+El índice físico no se ha verificado en esta entrega. La publicación comprueba estado/versión;
+edición modifica solo `DRAFT` y aumenta versión.
+
+## Implementado: inscripciones — 2026-11-16
+
+Colección `registrations`: `eventId`, `userId`, `status: CONFIRMED` y `registeredAt`. El índice único
+`{ eventId, userId }` impide duplicar la inscripción de una persona. El índice
+`{ eventId, status, registeredAt }` respalda el listado del organizador. `events.confirmedCount`
+mantiene el número confirmado y se actualiza en la misma transacción que la inserción de la
+inscripción, mediante una condición atómica que exige `confirmedCount < capacity`.

@@ -12,6 +12,7 @@ export class MoonEvent {
   @Prop({ required: true }) startsAt!: Date;
   @Prop({ default: 'America/Bogota', immutable: true }) timeZone!: string;
   @Prop({ required: true, min: 1 }) capacity!: number;
+  @Prop({ default: 0, min: 0 }) confirmedCount!: number;
   @Prop({ required: true }) venueName!: string;
   @Prop({ required: true }) address!: string;
   @Prop({ required: true }) cityCode!: string;

@@ -18,6 +18,19 @@ export interface PublicEvent {
   imageUrls: string[];
 }
 
+export interface PublicEventDetail extends PublicEvent {
+  description: string;
+  activityDescription: string;
+  rules: string;
+  mapLink: string;
+}
+
+export interface EventRegistrationResult {
+  alreadyRegistered: boolean;
+  confirmedCount: number;
+  registration: { id: string; registeredAt: string };
+}
+
 export interface PublicEventPage {
   events: PublicEvent[];
   total: number;
@@ -48,7 +61,20 @@ export class PublicEventsService {
       .cities;
   }
 
-  private withAbsoluteImageUrls(event: PublicEvent): PublicEvent {
+  async get(id: string): Promise<PublicEventDetail> {
+    const result = await this.call(
+      this.http.get<{ event: PublicEventDetail }>(apiUrl(`events/${id}`)),
+    );
+    return this.withAbsoluteImageUrls(result.event);
+  }
+
+  async register(id: string): Promise<EventRegistrationResult> {
+    return this.call(
+      this.http.post<EventRegistrationResult>(apiUrl(`events/${id}/registrations`), {}),
+    );
+  }
+
+  private withAbsoluteImageUrls<T extends PublicEvent>(event: T): T {
     return { ...event, imageUrls: event.imageUrls.map((url) => apiUrl(url)) };
   }
 

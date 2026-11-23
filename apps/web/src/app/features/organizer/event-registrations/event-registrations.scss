@@ -1,0 +1,192 @@
+:host {
+  display: block;
+}
+
+.registrations-page {
+  margin: auto;
+  max-width: 68rem;
+  padding: var(--moon-space-6) var(--moon-space-4) var(--moon-space-8);
+}
+
+.back-link {
+  align-items: center;
+  color: var(--moon-text-muted);
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 700;
+  gap: var(--moon-space-2);
+  text-decoration: none;
+}
+
+.back-link:focus-visible,
+td a:focus-visible {
+  border-radius: 4px;
+  outline: 3px solid var(--moon-focus);
+  outline-offset: 4px;
+}
+
+header {
+  border-bottom: 1px solid var(--moon-border);
+  margin: var(--moon-space-6) 0;
+  padding-bottom: var(--moon-space-6);
+}
+
+.eyebrow {
+  color: var(--moon-brand);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  color: var(--moon-text);
+  font-family: var(--moon-font-heading);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  letter-spacing: -0.04em;
+  margin: var(--moon-space-3) 0;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.summary,
+.privacy {
+  color: var(--moon-text-muted);
+  line-height: 1.55;
+}
+
+.privacy {
+  align-items: center;
+  display: flex;
+  font-size: 0.8125rem;
+  gap: var(--moon-space-2);
+  margin: var(--moon-space-4) 0 0;
+}
+
+.privacy span {
+  color: var(--moon-brand);
+}
+
+.registrations,
+.feedback {
+  background: var(--moon-surface);
+  border: 1px solid var(--moon-border);
+  border-radius: var(--moon-radius-lg);
+}
+
+.registrations__heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: var(--moon-space-5);
+}
+
+.registrations__heading span {
+  align-items: center;
+  background: var(--moon-surface-raised);
+  border-radius: var(--moon-radius-pill);
+  color: var(--moon-brand-soft);
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 800;
+  height: 2rem;
+  justify-content: center;
+  min-width: 2rem;
+  padding-inline: var(--moon-space-2);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 38rem;
+  width: 100%;
+}
+
+th,
+td {
+  border-top: 1px solid var(--moon-border);
+  padding: var(--moon-space-4) var(--moon-space-5);
+  text-align: left;
+}
+
+th {
+  color: var(--moon-text-faint);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+td {
+  color: var(--moon-text-muted);
+  font-size: 0.9rem;
+}
+
+td strong,
+td a {
+  display: block;
+}
+
+td strong {
+  color: var(--moon-text);
+  margin-bottom: 0.25rem;
+}
+
+td a {
+  color: var(--moon-brand-soft);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.loading {
+  color: var(--moon-text-muted);
+  padding: var(--moon-space-8) 0;
+}
+
+.feedback {
+  margin-top: var(--moon-space-8);
+  padding: var(--moon-space-6);
+}
+
+.feedback > span {
+  color: var(--moon-danger);
+}
+
+.feedback p {
+  color: var(--moon-text-muted);
+}
+
+.sr-only {
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (max-width: 600px) {
+  .registrations-page {
+    padding-top: var(--moon-space-5);
+  }
+
+  table {
+    min-width: 31rem;
+  }
+
+  th,
+  td {
+    padding: var(--moon-space-3) var(--moon-space-4);
+  }
+}

@@ -20,6 +20,7 @@ import {
   OrganizerGuard,
   type OrganizerRequest,
 } from '../auth/organizer.guard.js';
+import { ProfileGuard, type ProfileRequest } from '../auth/profile.guard.js';
 import {
   EventImageParamsDto,
   EventListDto,
@@ -28,12 +29,16 @@ import {
   SaveEventDto,
 } from './events.dto.js';
 import { EventsService } from './events.service.js';
+import { RegistrationsService } from './registrations.service.js';
 import type { UploadedImage } from '../storage/r2-storage.service.js';
 
 @Controller('organizer/events')
 @UseGuards(OrganizerGuard)
 export class EventsController {
-  constructor(private readonly events: EventsService) {}
+  constructor(
+    private readonly events: EventsService,
+    private readonly registrationService: RegistrationsService,
+  ) {}
   @Get() list(@Req() req: OrganizerRequest, @Query() query: EventListDto) {
     return this.events.list(req.user._id, query.page);
   }
@@ -46,6 +51,12 @@ export class EventsController {
         await this.events.get(req.user._id, params.id),
       ),
     };
+  }
+  @Get(':id/registrations') async listRegistrations(
+    @Req() req: OrganizerRequest,
+    @Param() params: EventParamsDto,
+  ) {
+    return this.registrationService.listForOrganizer(req.user._id, params.id);
   }
   @Post() async create(
     @Req() req: OrganizerRequest,
@@ -111,7 +122,10 @@ export class EventsController {
 
 @Controller('events')
 export class PublicEventsController {
-  constructor(private readonly events: EventsService) {}
+  constructor(
+    private readonly events: EventsService,
+    private readonly registrationService: RegistrationsService,
+  ) {}
 
   @Get('cities') cities() {
     return this.events.publicCities().then((cities) => ({ cities }));
@@ -120,6 +134,17 @@ export class PublicEventsController {
   @Get()
   list(@Query() query: PublicEventListDto) {
     return this.events.listPublic(query);
+  }
+
+  @Post(':id/registrations')
+  @UseGuards(ProfileGuard)
+  register(@Req() req: ProfileRequest, @Param() params: EventParamsDto) {
+    return this.registrationService.register(req.user, params.id);
+  }
+
+  @Get(':id')
+  async get(@Param() params: EventParamsDto) {
+    return { event: await this.events.getPublic(params.id) };
   }
 
   @Get(':id/images/:imageKey')

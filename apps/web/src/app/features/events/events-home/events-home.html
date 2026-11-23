@@ -86,7 +86,11 @@
     } @else {
       <div class="event-grid">
         @for (event of events(); track event.id) {
-          <article class="event-card">
+          <a
+            class="event-card"
+            [routerLink]="['/eventos', event.id]"
+            [attr.aria-label]="'Ver detalles de ' + event.title"
+          >
             <div class="cover">
               @if (event.imageUrls[0]) {
                 <img
@@ -116,13 +120,13 @@
                   ><strong>{{ event.confirmedCount }}/{{ event.capacity }}</strong>
                   confirmados</span
                 >
-                <div aria-hidden="true"><i [style.width.%]="0"></i></div>
+                <div aria-hidden="true"><i [style.width.%]="capacityPercent(event)"></i></div>
                 <span class="event-arrow material-symbols-rounded" aria-hidden="true"
                   >arrow_forward</span
                 >
               </div>
             </div>
-          </article>
+          </a>
         }
       </div>
       @if (hasMore) {

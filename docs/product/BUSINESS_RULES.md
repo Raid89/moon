@@ -22,10 +22,10 @@
 ## Inscripciones
 
 - [C] Un usuario puede inscribirse a un evento; el público ve cantidad inscrita/cupo total.
-- [P] Una sola inscripción **activa** por `(userId, eventId)`; reintento idempotente.
-- [P] Contar solo inscripciones activas/confirmadas, nunca canceladas ni pendientes.
-- [P] No superar capacidad: validación y escritura atómica/transaccional en backend, protegidas frente a concurrencia.
-- [P] Inscripción requiere sesión y perfil mínimo completo.
+- [C] Una sola inscripción **activa** por `(userId, eventId)`; reintento idempotente.
+- [C] Contar solo inscripciones activas/confirmadas, nunca canceladas ni pendientes.
+- [C] No superar capacidad: validación y escritura atómica/transaccional en backend, protegidas frente a concurrencia.
+- [C] Inscripción requiere sesión y perfil mínimo completo.
 - [P] Inscripción no permitida si el evento está cancelado, no publicado o fuera del periodo de inscripción.
 - [P] Usuarios pueden cancelar inscripción; libera un cupo, sujeto a plazo [D].
 - [D] Si se permite re-inscribir tras cancelar, si existe plazo límite, si se publica identidad de participantes, y si habrá lista de espera.
@@ -55,3 +55,14 @@
   8 MB. El bucket es privado; la API valida el archivo, controla lectura/escritura y no expone
   credenciales ni URLs públicas de R2.
 - Implementado: publicación exige fecha futura. No existe catálogo público ni inscripciones aún.
+
+## Inscripciones y lista de asistentes — 2026-11-16 [IMPLEMENTADO]
+
+- `POST /api/events/:id/registrations` exige sesión y perfil completo, reserva un único cupo y es
+  idempotente para la misma persona.
+- La reserva actualiza el contador del evento y crea la inscripción en una única transacción MongoDB;
+  el contador no puede superar la capacidad.
+- El público únicamente recibe `confirmedCount`. El organizador propietario consulta nombre, correo,
+  ciudad y hora de inscripción desde su lista privada; esos datos nunca se devuelven en rutas públicas.
+- No se implementó cancelación, re-inscripción ni lista de espera: D06 continúa pendiente para esas
+  políticas.

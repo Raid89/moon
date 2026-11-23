@@ -92,6 +92,17 @@ export class EventsService {
       .map(({ code, name }) => ({ code, name }))
       .sort((a, b) => a.name.localeCompare(b.name, 'es'));
   }
+  async getPublic(id: string) {
+    const event = await this.events
+      .findOne({ _id: id, status: 'PUBLISHED', startsAt: { $gte: new Date() } })
+      .exec();
+    if (!event)
+      throw new NotFoundException({
+        code: 'EVENT_NOT_FOUND',
+        message: 'No encontramos este evento.',
+      });
+    return this.serializePublicDetail(event);
+  }
   async get(organizerId: Types.ObjectId, id: string) {
     const event = await this.events.findOne({ _id: id, organizerId }).exec();
     if (!event)
@@ -231,6 +242,7 @@ export class EventsService {
       startsAt: event.startsAt.toISOString(),
       timeZone: event.timeZone,
       capacity: event.capacity,
+      confirmedCount: event.confirmedCount ?? 0,
       venueName: event.venueName,
       address: event.address,
       cityCode: event.cityCode,
@@ -251,7 +263,7 @@ export class EventsService {
       startsAt: event.startsAt.toISOString(),
       timeZone: event.timeZone,
       capacity: event.capacity,
-      confirmedCount: 0,
+      confirmedCount: event.confirmedCount ?? 0,
       venueName: event.venueName,
       address: event.address,
       cityCode: event.cityCode,
@@ -259,6 +271,15 @@ export class EventsService {
       imageUrls: (event.imageKeys ?? []).map(
         (imageKey) => `/api/events/${String(event._id)}/images/${imageKey}`,
       ),
+    };
+  }
+  private serializePublicDetail(event: MoonEvent & { _id: Types.ObjectId }) {
+    return {
+      ...this.serializePublic(event),
+      description: event.description,
+      activityDescription: event.activityDescription,
+      rules: event.rules,
+      mapLink: event.mapLink,
     };
   }
   private payload(dto: SaveEventDto) {

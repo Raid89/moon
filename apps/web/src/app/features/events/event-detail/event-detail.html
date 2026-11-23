@@ -1,0 +1,140 @@
+<main class="event-detail">
+  <div class="event-detail__container">
+    <a class="back-link" routerLink="/eventos">
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
+      Volver a los planes
+    </a>
+
+    @if (loading()) {
+      <section class="detail-feedback" aria-busy="true" aria-label="Cargando evento">
+        <span class="material-symbols-rounded" aria-hidden="true">hourglass_top</span>
+        <p>Cargando los detalles del encuentro…</p>
+      </section>
+    } @else if (error()) {
+      <section class="detail-feedback" role="alert">
+        <span class="material-symbols-rounded" aria-hidden="true">error</span>
+        <h1>No pudimos abrir este plan</h1>
+        <p>{{ error() }}</p>
+        <a class="return-button" routerLink="/eventos">Ver todos los planes</a>
+      </section>
+    } @else if (event(); as event) {
+      <header class="event-heading">
+        <p class="event-heading__eyebrow">
+          <span class="material-symbols-rounded" aria-hidden="true">verified</span>
+          Experiencia social Moon
+        </p>
+        <h1>{{ event.title }}</h1>
+        <div class="event-heading__meta">
+          <span>
+            <i class="material-symbols-rounded" aria-hidden="true">calendar_today</i>
+            {{ event.startsAt | date: 'EEEE, d MMMM' : '-0500' : 'es-CO' }}
+          </span>
+          <span>
+            <i class="material-symbols-rounded" aria-hidden="true">schedule</i>
+            {{ event.startsAt | date: 'h:mm a' : '-0500' : 'es-CO' }}
+          </span>
+          <span>
+            <i class="material-symbols-rounded" aria-hidden="true">location_on</i>
+            {{ event.venueName }}, {{ event.cityName }}
+          </span>
+        </div>
+      </header>
+
+      <div class="detail-layout">
+        <div class="detail-story">
+          <div class="cover">
+            @if (event.imageUrls[0]) {
+              <img [src]="event.imageUrls[0]" [alt]="event.title" referrerpolicy="no-referrer" />
+            } @else {
+              <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+            }
+            <span class="cover__badge">
+              <i class="material-symbols-rounded" aria-hidden="true">groups</i>
+              Encuentro Moon en {{ event.cityName }}
+            </span>
+          </div>
+
+          <section class="content-section" aria-labelledby="about-title">
+            <h2 id="about-title">Sobre la experiencia</h2>
+            <div class="rich-content" [innerHTML]="event.description"></div>
+          </section>
+
+          <section class="content-section" aria-labelledby="activity-title">
+            <h2 id="activity-title">¿Cómo será el encuentro?</h2>
+            <div
+              class="rich-content rich-content--activity"
+              [innerHTML]="event.activityDescription"
+            ></div>
+          </section>
+
+          <section class="content-section" aria-labelledby="rules-title">
+            <h2 id="rules-title">Para estar en la misma sintonía</h2>
+            <div class="rich-content rich-content--rules" [innerHTML]="event.rules"></div>
+          </section>
+        </div>
+
+        <aside class="detail-aside" aria-label="Información para asistir">
+          <section class="attendance-card">
+            <div class="attendance-card__top">
+              <div>
+                <p>Asistencia</p>
+                <strong>{{ event.confirmedCount }}/{{ event.capacity }}</strong>
+                <span>confirmados</span>
+              </div>
+              <span class="attendance-card__status"
+                ><i aria-hidden="true"></i>{{ availabilityLabel(event) }}</span
+              >
+            </div>
+            <div class="capacity-bar" aria-hidden="true">
+              <i [style.width.%]="capacityPercent(event)"></i>
+            </div>
+            <p class="attendance-card__message">
+              @if (registered()) {
+                Tu lugar ya quedó confirmado. ¡Nos vemos pronto!
+              } @else if (event.confirmedCount >= event.capacity) {
+                Este encuentro ya completó sus cupos.
+              } @else {
+                Reserva tu lugar: solo necesitas tener tu perfil Moon completo.
+              }
+            </p>
+            <moon-button
+              [loading]="reserving()"
+              [disabled]="registered() || event.confirmedCount >= event.capacity"
+              (click)="reserve()"
+            >
+              {{
+                registered()
+                  ? 'Ya tienes tu lugar'
+                  : availabilityLabel(event) === 'Cupos completos'
+                    ? 'Cupos completos'
+                    : 'Quiero ir'
+              }}
+              @if (!registered() && event.confirmedCount < event.capacity) {
+                <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+              }
+            </moon-button>
+          </section>
+
+          <section class="location-card">
+            <div class="location-card__heading">
+              <div>
+                <p>Ubicación</p>
+                <h2>{{ event.venueName }}</h2>
+              </div>
+              <span class="material-symbols-rounded" aria-hidden="true">storefront</span>
+            </div>
+            <p>{{ event.address }}</p>
+            <p>{{ event.cityName }}, Colombia</p>
+            <div class="map-preview" aria-hidden="true">
+              <span class="material-symbols-rounded">location_on</span>
+            </div>
+            <a [href]="event.mapLink" target="_blank" rel="noopener noreferrer">
+              Abrir en Google Maps
+              <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
+            </a>
+          </section>
+        </aside>
+      </div>
+    }
+  </div>
+</main>

@@ -26,17 +26,32 @@ inicio no ha pasado, ordenados por fecha ascendente. La página fija contiene ha
 es `{ events, total, page, pageSize }` y cada elemento público contiene solo identificador, título,
 fecha/zona horaria, sede, dirección, ciudad, capacidad, `confirmedCount`, y `imageUrls`.
 
-Mientras no exista el módulo de inscripciones, `confirmedCount` es siempre `0`; nunca representa
-datos simulados de asistentes. `GET /api/events/cities` lista los municipios con próximos eventos
-publicados para el selector del catálogo. `GET /api/events/:id/images/:imageKey` entrega una portada
+`confirmedCount` contiene únicamente las inscripciones confirmadas; nunca identifica asistentes.
+`GET /api/events/cities` lista los municipios con próximos eventos publicados para el selector del
+catálogo. `GET /api/events/:id/images/:imageKey` entrega una portada
 solo cuando pertenece a un evento publicado. El bucket R2 permanece privado y estas rutas no
 exponen URL ni credenciales de almacenamiento.
+
+`GET /api/events/:id` devuelve `{ event }` para un evento `PUBLISHED` cuyo inicio no haya pasado.
+Añade al objeto del catálogo `description`, `activityDescription`, `rules` y `mapLink`; conserva
+el contador confirmado. No devuelve organizador, correos ni lista de asistentes. Un evento no
+publicado, pasado o inexistente responde `EVENT_NOT_FOUND`.
+
+`POST /api/events/:id/registrations` exige una cookie de sesión y perfil completo. No recibe cuerpo;
+reserva un cupo de un evento publicado y futuro de manera transaccional. Devuelve
+`{ alreadyRegistered, confirmedCount, registration }`. La misma persona recibe la reserva existente
+sin ocupar otro cupo. Si no hay cupos devuelve `EVENT_FULL`; si no está disponible devuelve
+`EVENT_NOT_FOUND`.
+
+`GET /api/organizer/events/:id/registrations` exige `ORGANIZER` y propiedad del evento. Devuelve el
+resumen del evento y una lista privada con nombre, correo, ciudad y hora de inscripción. No existe
+una ruta pública equivalente.
 
 `GET /api/locations/departments` y `GET /api/locations/municipalities?departmentCode=05` entregan el
 catálogo usado por el formulario. Los errores usan `{ code, message, requestId }`.
 | `GET` | `/events` | Público | Listado paginado de publicados |
-| `GET` | `/events/:slug` | Público | Detalle público + inscritos confirmados/capacidad |
-| `POST` | `/events/:id/registrations` | USER u ORGANIZER autenticado | Inscribirse, idempotente |
+| `GET` | `/events/:id` | Público | Detalle público + inscritos confirmados/capacidad |
+| `POST` | `/events/:id/registrations` | USER u ORGANIZER autenticado y perfil completo | Inscribirse, idempotente |
 | `DELETE` | `/events/:id/registrations/me` | Sesión | Cancelación si se permite |
 | `GET` | `/users/me/registrations` | Sesión | Mis eventos |
 | `POST` | `/organizer/events` | ORGANIZER | Crear borrador |
